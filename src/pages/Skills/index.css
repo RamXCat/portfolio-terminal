@@ -1,0 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-headline: "Space Grotesk", sans-serif;
+  --font-mono: "Fira Code", monospace;
+
+  --color-primary: #f0b0ff;
+  --color-primary-container: #c778dd;
+  --color-on-primary-container: #52006b;
+  --color-secondary: #ffb4a6;
+  --color-tertiary: #c0c7d4;
+  --color-background: #10141a;
+  --color-surface-container-lowest: #0a0e15;
+  --color-surface-container-low: #181c22;
+  --color-surface-container: #1c2027;
+  --color-surface-container-high: #262a31;
+  --color-surface-container-highest: #31353c;
+  --color-outline-variant: #4e434f;
+  --color-on-surface: #dfe2ec;
+  --color-on-surface-variant: #d2c2d1;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-on-surface font-sans antialiased;
+  }
+}
+
+.grid-overlay {
+  background-image: linear-gradient(rgba(192, 199, 212, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(192, 199, 212, 0.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+}

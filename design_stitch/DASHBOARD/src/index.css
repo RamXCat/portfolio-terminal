@@ -1,0 +1,73 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #C778DD;
+  --color-on-primary: #10141a;
+  --color-surface: #10141a;
+  --color-surface-container: #1e232b;
+  --color-surface-container-low: #161a21;
+  --color-surface-container-lowest: #0d1014;
+  --color-outline-variant: #c0c7d420;
+  --color-tertiary: #c0c7d4;
+
+  --font-headline: "Space Grotesk", sans-serif;
+  --font-label: "Fira Code", monospace;
+  --font-sans: "Inter", sans-serif;
+
+  @keyframes scanline {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(200%); }
+  }
+
+  @keyframes logScroll {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-50%); }
+  }
+}
+
+@layer utilities {
+  .dots-pattern {
+    background-image: radial-gradient(#C778DD 1px, transparent 1px);
+    background-size: 16px 16px;
+    opacity: 0.2;
+  }
+
+  .nav-link {
+    position: relative;
+  }
+
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #C778DD;
+    transition: width 0.3s ease;
+  }
+
+  .nav-link:hover::after {
+    width: 100%;
+  }
+
+  .animate-scanline {
+    animation: scanline 4s linear infinite;
+  }
+
+  .animate-log-scroll {
+    animation: logScroll 15s linear infinite;
+  }
+}
+
+body {
+  font-family: var(--font-sans);
+}
+
+.headline-font {
+  font-family: var(--font-headline);
+}
+
+.label-font {
+  font-family: var(--font-label);
+}
