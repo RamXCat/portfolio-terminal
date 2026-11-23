@@ -109,14 +109,16 @@ export default function App() {
       <ScrollToTop />
       <ScrollProgressBar />
       {!isGameActive && <CursorBubble currentTheme={theme} />}
-      <ModeSwitcher 
-        currentMode={viewMode} 
-        onModeChange={handleModeChange} 
-        onOpenTerminal={() => toggleTerminal(true)}
-        onGameToggle={toggleGame}
-        onThemeChange={updateTheme}
-        currentTheme={theme}
-      />
+      {!isGameActive && (
+        <ModeSwitcher 
+          currentMode={viewMode} 
+          onModeChange={handleModeChange} 
+          onOpenTerminal={() => toggleTerminal(true)}
+          onGameToggle={toggleGame}
+          onThemeChange={updateTheme}
+          currentTheme={theme}
+        />
+      )}
       <Suspense fallback={null}>
         {isGameActive && <ShooterGame isActive={isGameActive} onClose={() => setIsGameActive(false)} />}
       </Suspense>
