@@ -95,7 +95,13 @@ Syntax_OS includes real-time environmental theme switching via hash tags.
 | :--- | :--- | :--- | :---: |
 | `#retro` | `#retro` | 80s Cyber-Pink synthwave glow | Yes |
 | `#bw` | `#bw` | Minimal high-contrast monochrome industrial | Yes |
-| `#urbane` | `#urbane` | Sleek modern enterprise dark palette | Yes |
+| `#urbane` | `#urbane` | Sleek modern enterprise dark palette with neon lime | Yes |
+| `#bauhaus` | `#bauhaus` | Bauhaus architectural palette: dark slate, crimson red & cobalt blue | Yes |
+| `#cyberpunk` | `#cyberpunk` | High-voltage electric cyan & neon pink aesthetic | Yes |
+| `#matrix` | `#matrix` | Full digital phosphor green terminal theme | Yes |
+| `#synthwave` | `#synthwave` | Neon sunset magenta and cyan gradient glow | Yes |
+| `#tokyo` | `#tokyo` | Tokyo Night sleek indigo, ice blue & pastel accents | Yes |
+| `#amber` | `#amber` | 1980s monochrome vintage amber CRT glow | Yes |
 | `#default` | `#default` | Standard system dark terminal scheme | No |
 | `/themes` | `/themes` | Lists all available theme modes and usage instructions | No |
 
@@ -109,7 +115,8 @@ Syntax_OS features an integrated **Achievement Engine** that tracks 12 hidden sy
 | :-: | :--- | :--- | :--- |
 | **1** | `/matrix` | Slash Command | Triggers green digital rainfall across the entire screen for 5 seconds. |
 | **2** | `/konami` | Slash Command | Launches celebratory confetti party protocol across the UI for 5 seconds. |
-| **3** | `/coffee` | Slash Command | Terminal brews an ASCII coffee cup and displays caffeination telemetry. |
+| **3** | `/game` *(or `/destroy`)* | Slash Command | Spawns a playable character holding a plasma rifle to shoot and obliterate buttons, navbars, and headers. |
+| **4** | `/coffee` | Slash Command | Terminal brews an ASCII coffee cup and displays caffeination telemetry. |
 | **4** | `sudo hire ramxcat` | Terminal Command | Runs the recruitment validation protocol and returns offer letter success. |
 | **5** | `rm -rf doubts` | Terminal Command | Deletes Impostor Syndrome and boosts system confidence to maximum. |
 | **6** | `cat .secrets` | File Decryption | Decrypts primary secret archives. |

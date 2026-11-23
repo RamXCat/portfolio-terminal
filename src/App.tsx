@@ -1,20 +1,26 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense, lazy } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Terminal from "./components/Terminal";
 import Dashboard from "./pages/Dashboard";
-import Projects from "./pages/Projects";
-import Skills from "./pages/Skills";
-import About from "./pages/About";
-import Network from "./pages/Network";
-import MatrixRain from "./components/MatrixRain";
-import PartyMode from "./components/PartyMode";
-import NotFound from "./pages/NotFound";
 import ScrollToTop from "./components/ScrollToTop";
 import Notification from "./components/Notification";
+import CursorBubble from "./components/CursorBubble";
+import ScrollProgressBar from "./components/ScrollProgressBar";
+
+// Lazy-load secondary pages, visual overlays and game for optimal bundle performance
+const Projects = lazy(() => import("./pages/Projects"));
+const Skills = lazy(() => import("./pages/Skills"));
+const About = lazy(() => import("./pages/About"));
+const Network = lazy(() => import("./pages/Network"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const ShooterGame = lazy(() => import("./components/ShooterGame"));
+const MatrixRain = lazy(() => import("./components/MatrixRain"));
+const PartyMode = lazy(() => import("./components/PartyMode"));
 
 export default function App() {
   const [isMatrixActive, setIsMatrixActive] = useState(false);
   const [isPartyModeActive, setIsPartyModeActive] = useState(false);
+  const [isGameActive, setIsGameActive] = useState(false);
   const [theme, setTheme] = useState("default");
   const [isTerminalOpen, setIsTerminalOpen] = useState(false);
   const [isNotificationsEnabled, setIsNotificationsEnabled] = useState(true);
@@ -22,6 +28,7 @@ export default function App() {
 
   const toggleMatrix = () => setIsMatrixActive(v => !v);
   const toggleParty = () => setIsPartyModeActive(v => !v);
+  const toggleGame = () => setIsGameActive(v => !v);
   const updateTheme = (t: string) => setTheme(t);
   const toggleTerminal = (open?: boolean) => setIsTerminalOpen(v => open ?? !v);
   const toggleNotifications = (enabled: boolean) => setIsNotificationsEnabled(enabled);
@@ -71,28 +78,38 @@ export default function App() {
   return (
     <BrowserRouter>
       <ScrollToTop />
+      <ScrollProgressBar />
+      {!isGameActive && <CursorBubble currentTheme={theme} />}
+      <Suspense fallback={null}>
+        {isGameActive && <ShooterGame isActive={isGameActive} onClose={() => setIsGameActive(false)} />}
+      </Suspense>
       <Notification isTerminalOpen={isTerminalOpen} isEnabled={isNotificationsEnabled} />
       <div className={isPartyModeActive ? 'party-active' : ''}>
-        {isMatrixActive && <MatrixRain />}
-        {isPartyModeActive && <PartyMode />}
+        <Suspense fallback={null}>
+          {isMatrixActive && <MatrixRain />}
+          {isPartyModeActive && <PartyMode />}
+        </Suspense>
         <Terminal 
           isOpen={isTerminalOpen} 
           onClose={() => toggleTerminal(false)} 
           onMatrixToggle={toggleMatrix}
           onPartyToggle={toggleParty}
+          onGameToggle={toggleGame}
           onThemeChange={updateTheme}
           onNotificationsToggle={toggleNotifications}
           isNotificationsEnabled={isNotificationsEnabled}
           focusCounter={terminalFocusCounter}
         />
-        <Routes>
-          <Route path="/" element={<Dashboard onMatrixToggle={toggleMatrix} onPartyToggle={toggleParty} onThemeChange={updateTheme} isTerminalOpen={isTerminalOpen} setIsTerminalOpen={toggleTerminal} />} />
-          <Route path="/projects" element={<Projects onMatrixToggle={toggleMatrix} onPartyToggle={toggleParty} onThemeChange={updateTheme} isTerminalOpen={isTerminalOpen} setIsTerminalOpen={toggleTerminal} />} />
-          <Route path="/skills" element={<Skills onMatrixToggle={toggleMatrix} onPartyToggle={toggleParty} onThemeChange={updateTheme} isTerminalOpen={isTerminalOpen} setIsTerminalOpen={toggleTerminal} />} />
-          <Route path="/about" element={<About onMatrixToggle={toggleMatrix} onPartyToggle={toggleParty} onThemeChange={updateTheme} isTerminalOpen={isTerminalOpen} setIsTerminalOpen={toggleTerminal} />} />
-          <Route path="/network" element={<Network onMatrixToggle={toggleMatrix} onPartyToggle={toggleParty} onThemeChange={updateTheme} isTerminalOpen={isTerminalOpen} setIsTerminalOpen={toggleTerminal} />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <Suspense fallback={null}>
+          <Routes>
+            <Route path="/" element={<Dashboard onMatrixToggle={toggleMatrix} onPartyToggle={toggleParty} onThemeChange={updateTheme} isTerminalOpen={isTerminalOpen} setIsTerminalOpen={toggleTerminal} />} />
+            <Route path="/projects" element={<Projects onMatrixToggle={toggleMatrix} onPartyToggle={toggleParty} onThemeChange={updateTheme} isTerminalOpen={isTerminalOpen} setIsTerminalOpen={toggleTerminal} />} />
+            <Route path="/skills" element={<Skills onMatrixToggle={toggleMatrix} onPartyToggle={toggleParty} onThemeChange={updateTheme} isTerminalOpen={isTerminalOpen} setIsTerminalOpen={toggleTerminal} />} />
+            <Route path="/about" element={<About onMatrixToggle={toggleMatrix} onPartyToggle={toggleParty} onThemeChange={updateTheme} isTerminalOpen={isTerminalOpen} setIsTerminalOpen={toggleTerminal} />} />
+            <Route path="/network" element={<Network onMatrixToggle={toggleMatrix} onPartyToggle={toggleParty} onThemeChange={updateTheme} isTerminalOpen={isTerminalOpen} setIsTerminalOpen={toggleTerminal} />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
       </div>
     </BrowserRouter>
   );

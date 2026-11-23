@@ -296,35 +296,59 @@ const GhostQueryCard = () => {
 
 const PROJECTS_DATA = [
   {
-    title: "AI_SELF_HEALING_CICD",
-    branch: "research/ml-core",
-    uptime: "2026_PROTO",
-    lang: "JAVA/PYTHON",
-    description: "Designing and implementing an intelligent CI/CD framework that leverages machine learning to predict build failures in real-time and autonomously triggers self-healing mechanisms using Docker and SpringBoot microservices.",
-    image: "/ci_cd.png",
-    featured: true,
-    tags: ['JAVA', 'ML', 'SpringBoot', 'DOCKER', 'ACTIONS'],
-    link: "https://github.com/RamXCat"
-  },
-  {
-    title: "WASTE_MANAGEMENT_HUB",
+    title: "AGRO-VISION-AI",
     branch: "main",
-    uptime: "2024",
-    lang: "JAVA/REACT",
-    description: "Full-stack web application for smart waste collection management. Built portals for users, admins, and staff with real-time tracking, image uploads, and secure authentication.",
-    image: "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?q=80&w=2070&auto=format&fit=crop",
-    tags: ['MYSQL', 'SpringBoot', 'REACT', 'DARK_MODE'],
-    link: "https://github.com/RamXCat/waste-collection-website"
+    uptime: "2026_ACTIVE",
+    lang: "PYTHON / PYTORCH",
+    description: "AI-driven computer vision system for real-time agricultural crop disease detection, precision farming analytics, and yield health monitoring.",
+    image: "https://images.unsplash.com/photo-1574943320219-553eb213f72d?q=80&w=2070&auto=format&fit=crop",
+    featured: true,
+    tags: ['PYTHON', 'PYTORCH', 'OPENCV', 'FASTAPI'],
+    link: "https://github.com/RamXCat/Agro-Vision-AI"
   },
   {
-    title: "TASK_REMINDER_ANDROID",
-    branch: "play/store_v1",
-    uptime: "2024",
-    lang: "KOTLIN",
-    description: "Modern Android application built with Kotlin and Room Database. Features smart reminders via WorkManager, background notifications, and custom home-screen widgets.",
-    image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=2070&auto=format&fit=crop",
-    tags: ['KOTLIN', 'MVVM', 'ROOM', 'WORKER'],
-    link: "https://github.com/RamXCat/TaskReminderApp"
+    title: "VILLAGE-HEALTH-WORKER",
+    branch: "production",
+    uptime: "2026_STABLE",
+    lang: "REACT / TYPESCRIPT",
+    description: "Offline-capable digital assistant empowering grassroots rural healthcare workers with clinical diagnostic workflows, patient records, and immunization tracking.",
+    image: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2070&auto=format&fit=crop",
+    featured: true,
+    tags: ['REACT', 'TYPESCRIPT', 'PWA', 'HEALTHCARE'],
+    link: "https://github.com/RamXCat/Village-Health-Worker-Digital-Assistant"
+  },
+  {
+    title: "ADAPTIVE-HONEYPOT",
+    branch: "threat-intel",
+    uptime: "2026_DEPLOYED",
+    lang: "PYTHON / LINUX",
+    description: "Intelligent cyber-defense decoy system that dynamically adapts network deception layers and behavioral traps to capture and analyze threat actor TTPs in real-time.",
+    image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?q=80&w=2070&auto=format&fit=crop",
+    featured: false,
+    tags: ['CYBERSECURITY', 'PYTHON', 'NETWORKING', 'LINUX'],
+    link: "https://github.com/RamXCat/adaptive-honeypot"
+  },
+  {
+    title: "AUTONEXT-CLASH-OF-CLANS",
+    branch: "master",
+    uptime: "2025_STABLE",
+    lang: "PYTHON / OPENCV",
+    description: "Automated base reconnaissance and resource-matching engine leveraging screen vision and heuristic heuristics for optimized matchmaking routines.",
+    image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop",
+    featured: false,
+    tags: ['AUTOMATION', 'PYTHON', 'OPENCV', 'ALGORITHMS'],
+    link: "https://github.com/RamXCat/AutoNext-clash-of-clans"
+  },
+  {
+    title: "PORTFOLIO-TERMINAL",
+    branch: "main",
+    uptime: "2026_ONLINE",
+    lang: "TYPESCRIPT / REACT",
+    description: "High-performance interactive hacker portfolio featuring retro Linux pseudoterminal, KDE wobbly rubber window physics, DOM demolition physics, and Web Audio synthesizers.",
+    image: "/ci_cd.png",
+    featured: false,
+    tags: ['REACT', 'TYPESCRIPT', 'TAILWIND', 'WEB-AUDIO'],
+    link: "https://github.com/RamXCat/portfolio-terminal"
   }
 ];
 

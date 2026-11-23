@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, FormEvent } from "react";
-import { motion, AnimatePresence, useDragControls } from "motion/react";
+import { motion, AnimatePresence, useDragControls, useMotionValue, useSpring, useTransform, useVelocity } from "motion/react";
 import { Terminal as TerminalIcon, X } from "lucide-react";
 import TerminalDashboard from "./TerminalDashboard";
 
@@ -8,6 +8,7 @@ interface TerminalProps {
   onClose: () => void;
   onMatrixToggle: () => void;
   onPartyToggle: () => void;
+  onGameToggle?: () => void;
   onThemeChange?: (theme: string) => void;
   onNotificationsToggle?: (enabled: boolean) => void;
   isNotificationsEnabled?: boolean;
@@ -46,6 +47,7 @@ export default function Terminal({
   onClose, 
   onMatrixToggle, 
   onPartyToggle, 
+  onGameToggle,
   onThemeChange,
   onNotificationsToggle,
   isNotificationsEnabled,
@@ -62,10 +64,11 @@ export default function Terminal({
   const [suggestion, setSuggestion] = useState("");
 
   const COMMANDS = [
-    '/matrix', '/konami', '/themes', '/notifications', 'pwd', 'date', 'uname', 'sudo', 'ls', 'cat', 'clear', 'exit', '/work', 
+    '/matrix', '/konami', '/game', '/destroy', '/chaos', '/themes', '/notifications', 'pwd', 'date', 'uname', 'sudo', 'ls', 'cat', 'clear', 'exit', '/work', 
     'manifest.txt', 'readme.md', '.env', '.hidden_secrets', 'frontend.bin', 'backend.bin', 
     'devops.sys', 'integrations.db', 'ai_cicd.v1', 'waste_hub.v2', 'reminder_app.android',
-    '#retro', '#bw', '#urbane', '#default', '.secrets', '.hidden_secrets', '.easter_egg', 'rm'
+    '#retro', '#bw', '#urbane', '#cyberpunk', '#matrix', '#synthwave', '#tokyo', '#amber', '#bauhaus', '#default', 
+    '.secrets', '.hidden_secrets', '.easter_egg', 'rm'
   ];
 
   useEffect(() => {
@@ -149,8 +152,9 @@ export default function Terminal({
 
   const [foundEggs, setFoundEggs] = useState<string[]>([]);
   const EASTER_EGGS = [
-    '/matrix', '/konami', '/coffee', 'sudo hire ramxcat', 'rm -rf doubts', 
-    '.secrets', 'cat .env', 'cat readme.md', '#retro', '#bw', '#urbane', '/notifications'
+    '/matrix', '/konami', '/coffee', '/game', 'sudo hire ramxcat', 'rm -rf doubts', 
+    '.secrets', 'cat .env', 'cat readme.md', '#retro', '#bw', '#urbane', 
+    '#cyberpunk', '#matrix', '#synthwave', '#tokyo', '#amber', '#bauhaus', '/notifications'
   ];
 
   // Side effect for notifications to avoid duplicates from StrictMode/State updates
@@ -211,13 +215,13 @@ export default function Terminal({
     const cleanCmd = rawCmd.toLowerCase().replace(/^[/#]/, '');
 
     // List of commands that MUST have a leading slash
-    const slashRequired = ['about', 'projects', 'skills', 'network', 'whoami', 'socials', 'coffee', 'themes', 'matrix', 'konami', 'notifications', 'work', 'uname'];
+    const slashRequired = ['about', 'projects', 'skills', 'network', 'whoami', 'socials', 'coffee', 'themes', 'matrix', 'konami', 'game', 'destroy', 'chaos', 'notifications', 'work', 'uname'];
 
     setHistory(prev => [...prev, { type: 'cmd', text: input.trim() }]);
     setCmdHistory(prev => [input.trim(), ...prev.filter(c => c !== input.trim())]);
     setHistoryIndex(-1);
 
-    if (isHash && ['retro', 'bw', 'urbane', 'default'].includes(cleanCmd)) {
+    if (isHash && ['retro', 'bw', 'urbane', 'cyberpunk', 'matrix', 'synthwave', 'tokyo', 'amber', 'bauhaus', 'default'].includes(cleanCmd)) {
       if (cleanCmd !== 'default') trackEgg('#' + cleanCmd);
       if (onThemeChange) {
         onThemeChange(cleanCmd);
@@ -382,6 +386,24 @@ export default function Terminal({
           setHistory(prev => [...prev, { type: 'resp', text: '[SYSTEM] Matrix protocol terminated. System restored.' }]);
         }, 5000);
         break;
+      case 'game':
+      case 'destroy':
+      case 'chaos':
+        trackEgg('/game');
+        if (onGameToggle) {
+          onGameToggle();
+          onClose(); // minimize terminal so user can play immediately
+          responses = [
+            '[CHAOS] Tactical Operative deployed!',
+            'Controls:',
+            '  [WASD / Arrows] - Move Operative',
+            '  [Mouse]         - Aim Plasma Rifle',
+            '  [Left Click]    - Shoot & destroy buttons, navbar, text',
+            '  [R]             - Restore elements',
+            '  [ESC]           - Exit Game Mode'
+          ];
+        }
+        break;
       case 'konami':
         trackEgg('/konami');
         onPartyToggle();
@@ -394,12 +416,18 @@ export default function Terminal({
       case 'themes':
         responses = [
           'Available theme modes:',
-          '  #retro   - 80s Cyber-Pink',
-          '  #bw      - Minimal Industrial',
-          '  #urbane  - Modern Professional',
-          '  #default - System Standard',
+          '  #bauhaus   - Bauhaus Iconic Black, Crimson Red & Cobalt Blue',
+          '  #cyberpunk - High-Voltage Cyan & Hot-Pink',
+          '  #matrix    - Classic Phosphor Terminal Green',
+          '  #synthwave - Sunset Purple & Electric Blue',
+          '  #tokyo     - Tokyo Night Deep Indigo & Ice',
+          '  #amber     - Vintage 1980s Amber CRT Terminal',
+          '  #urbane    - Modern Professional Neon-Lime',
+          '  #retro     - 80s Cyber-Pink Synthwave',
+          '  #bw        - Minimal Industrial Monochrome',
+          '  #default   - System Standard One-Dark Scheme',
           ' ',
-          'Usage: Type the # followed by the mode.'
+          'Usage: Type the # followed by the mode (e.g. #bauhaus).'
         ];
         break;
       case 'sudo':
@@ -635,7 +663,7 @@ export default function Terminal({
           ];
         } else if (args.includes('projects/') || args.includes('projects')) {
           responses = [
-            { text: 'ai_cicd.v1    waste_hub.v2    reminder_app.android', color: 'var(--color-syntax-green)' }
+            { text: 'Agro-Vision-AI.v1    Village-Health-Worker.v2    adaptive-honeypot.v1    AutoNext-CoC.v3    portfolio-terminal.v4', color: 'var(--color-syntax-green)' }
           ];
         } else {
           responses = [
@@ -677,6 +705,24 @@ export default function Terminal({
   const [size, setSize] = useState({ width: 520, height: 470 });
   const [isResizing, setIsResizing] = useState(false);
   const [isMobileMode, setIsMobileMode] = useState(false);
+
+  // Linux Compiz/KDE "Wobbly Window" Rubber physics simulation
+  const dragX = useMotionValue(0);
+  const dragY = useMotionValue(0);
+  const xVelocity = useVelocity(dragX);
+  const yVelocity = useVelocity(dragY);
+
+  // Dynamic rubber skew & tilt based on drag speed
+  const rawRotate = useTransform(xVelocity, [-2500, 2500], [-10, 10]);
+  const rawSkewX = useTransform(xVelocity, [-2500, 2500], [-7, 7]);
+  const rawSkewY = useTransform(yVelocity, [-2500, 2500], [-5, 5]);
+  const rawScale = useTransform(xVelocity, [-3000, 0, 3000], [1.025, 1, 1.025]);
+
+  // Rubber spring physics
+  const wobblyRotate = useSpring(rawRotate, { stiffness: 280, damping: 14, mass: 0.6 });
+  const wobblySkewX = useSpring(rawSkewX, { stiffness: 280, damping: 14, mass: 0.6 });
+  const wobblySkewY = useSpring(rawSkewY, { stiffness: 280, damping: 14, mass: 0.6 });
+  const wobblyScale = useSpring(rawScale, { stiffness: 300, damping: 15, mass: 0.5 });
 
   useEffect(() => {
     const checkMobile = () => {
@@ -733,9 +779,21 @@ export default function Terminal({
           drag
           dragControls={dragControls}
           dragListener={false}
-          dragMomentum={false}
+          dragMomentum={true}
+          dragTransition={{ bounceStiffness: 300, bounceDamping: 18 }}
+          dragElastic={0.08}
           className={`fixed ${isMobileMode ? "inset-x-4" : "right-8"} top-24 z-[70] border border-outline-variant bg-surface-container-lowest/95 backdrop-blur-md rounded-sm overflow-hidden shadow-2xl flex flex-col min-w-[280px] min-h-[200px] ${isResizing ? "select-none" : ""}`}
-          style={{ width: size.width, height: size.height }}
+          style={{ 
+            width: size.width, 
+            height: size.height,
+            x: dragX,
+            y: dragY,
+            rotate: wobblyRotate,
+            skewX: wobblySkewX,
+            skewY: wobblySkewY,
+            scale: wobblyScale,
+            transformOrigin: "top center"
+          }}
         >
           {/* Draggable Header */}
           <div 

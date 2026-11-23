@@ -17,36 +17,50 @@ import {
 const EXPERIENCES = [
   {
     period: "2026 — PRESENT",
-    role: "AI-BASED FAILURE PREDICTION AND SELF-HEALING SYSTEM FOR CI/CD PIPELINES",
-    company: "Independent Research & Development",
+    role: "AGRO-VISION-AI",
+    company: "AI & Computer Vision",
     description:
-      "Designing and implementing an intelligent CI/CD framework that leverages machine learning to predict build and test failures in real-time and autonomously triggers self-healing mechanisms using Docker, GitHub Actions, SpringBoot microservices, and Linux infrastructure.",
+      "AI-driven computer vision system for real-time agricultural crop disease detection, precision farming analytics, and yield health monitoring using PyTorch and FastAPI. https://github.com/RamXCat/Agro-Vision-AI",
   },
   {
-    period: "2024",
-    role: "WASTE COLLECTION MANAGEMENT SYSTEM",
-    company: "Full-stack Web Development",
+    period: "2026",
+    role: "VILLAGE-HEALTH-WORKER DIGITAL ASSISTANT",
+    company: "Healthcare Systems & PWA",
     description:
-      "Full-stack web application for smart waste collection management. Built user, admin and staff portals with real-time tracking, image upload, dark mode and secure authentication. https://github.com/RamXCat/waste-collection-website",
+      "Offline-capable digital assistant empowering grassroots rural healthcare workers with diagnostic workflows, clinical patient records, and immunization tracking. https://github.com/RamXCat/Village-Health-Worker-Digital-Assistant",
   },
   {
-    period: "2024",
-    role: "TASK REMINDER ANDROID APP",
-    company: "Mobile Native Development",
+    period: "2025 — 2026",
+    role: "ADAPTIVE-HONEYPOT DECEPTION NETWORK",
+    company: "Cybersecurity & Threat Intel",
     description:
-      "Modern Android application with Kotlin, Room Database, WorkManager and smart reminders. Features MVVM architecture, background notifications and home-screen widgets. https://github.com/RamXCat/TaskReminderApp",
+      "Intelligent cyber-defense decoy system that dynamically adapts deception layers to capture and analyze threat actor TTPs in real-time across Linux nodes. https://github.com/RamXCat/adaptive-honeypot",
+  },
+  {
+    period: "2025",
+    role: "AUTONEXT CLASH OF CLANS ENGINE",
+    company: "Automation & Vision Algorithms",
+    description:
+      "Automated base reconnaissance and resource-matching engine leveraging screen vision and heuristic search algorithms for real-time decision making. https://github.com/RamXCat/AutoNext-clash-of-clans",
+  },
+  {
+    period: "2025 — 2026",
+    role: "PORTFOLIO-TERMINAL (CORE ARCH)",
+    company: "Full-stack Systems Architecture",
+    description:
+      "High-performance interactive hacker portfolio featuring retro Linux pseudoterminal, KDE wobbly rubber window physics, DOM demolition physics, and Web Audio synthesizers. https://github.com/RamXCat/portfolio-terminal",
   },
 ];
 
 const ACADEMIC_RECORD = [
   {
-    degree: "Pursuing B.E. Computer Science",
+    degree: "B.E. Computer Science & Engineering (4th Year)",
     institution: "Engineering Academy",
-    meta: "CLASS_OF_2027 / ONGOING",
+    meta: "SENIOR YEAR (4TH YEAR) / CLASS_OF_2026",
   },
 ];
 
-const TECH_STACK = ["Java", "SpringBoot", "React", "Docker", "Linux", "MySQL"];
+const TECH_STACK = ["Python", "Java", "PyTorch", "React", "TypeScript", "Docker", "Linux", "MySQL", "OpenCV"];
 
 // --- Sub-components ---
 function SidebarItem({
@@ -224,9 +238,9 @@ export default function About({ onMatrixToggle, onPartyToggle, onThemeChange, is
                 />
               </div>
               <div className="absolute -bottom-4 -left-4 md:-bottom-6 md:-left-6 bg-primary-container p-4 md:p-6 w-40 md:w-48 font-mono text-background text-[10px] md:text-xs">
-                <p>SERIAL: RXC-25-BLR</p>
+                <p>SERIAL: RXC-26-BLR</p>
                 <p>STATUS: ACTIVE</p>
-                <p>CLASS: 3RD YEAR</p>
+                <p>CLASS: 4TH YEAR</p>
               </div>
             </div>
           </motion.header>

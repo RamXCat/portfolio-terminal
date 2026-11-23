@@ -251,11 +251,12 @@ export default function Skills({ onMatrixToggle, onPartyToggle, onThemeChange, i
                 </div>
                 
                 <div className="space-y-6 md:space-y-8">
-                  <SkillProgressBar label="Java_Platform" value={65} />
-                  <SkillProgressBar label="SpringBoot_Arch" value={60} />
-                  <SkillProgressBar label="Python_Script" value={55} />
-                  <SkillProgressBar label="MySQL_Database" value={55} />
-                  <SkillProgressBar label="MongoDB_System" value={50} />
+                  <SkillProgressBar label="Python / PyTorch (AI & CV)" value={88} />
+                  <SkillProgressBar label="Java / SpringBoot Arch" value={82} />
+                  <SkillProgressBar label="Cybersecurity / Network Defense" value={78} />
+                  <SkillProgressBar label="React / TypeScript / Tailwind" value={85} />
+                  <SkillProgressBar label="Linux / Docker / DevOps" value={80} />
+                  <SkillProgressBar label="OpenCV / Automation Heuristics" value={75} />
                 </div>
               </div>
 
@@ -300,12 +301,12 @@ export default function Skills({ onMatrixToggle, onPartyToggle, onThemeChange, i
                   </p>
                   <div className="grid grid-cols-2 gap-3 md:gap-4">
                     <div className="bg-surface-container-highest p-3 md:p-4 border border-outline-variant/10">
-                      <div className="text-[10px] font-label text-tertiary mb-1 uppercase">Javascript</div>
-                      <div className="text-xl md:text-2xl font-headline font-bold text-primary uppercase">50%</div>
+                      <div className="text-[10px] font-label text-tertiary mb-1 uppercase">TypeScript</div>
+                      <div className="text-xl md:text-2xl font-headline font-bold text-primary uppercase">85%</div>
                     </div>
                     <div className="bg-surface-container-highest p-3 md:p-4 border border-outline-variant/10">
-                      <div className="text-[10px] font-label text-tertiary mb-1 uppercase">ReactJS</div>
-                      <div className="text-xl md:text-2xl font-headline font-bold text-primary uppercase">40%</div>
+                      <div className="text-[10px] font-label text-tertiary mb-1 uppercase">React PWA</div>
+                      <div className="text-xl md:text-2xl font-headline font-bold text-primary uppercase">80%</div>
                     </div>
                   </div>
                 </div>
@@ -317,10 +318,10 @@ export default function Skills({ onMatrixToggle, onPartyToggle, onThemeChange, i
               {/* Specialized Grid */}
               <div className="md:col-span-6 bg-surface-container border-t border-outline-variant/10 grid grid-cols-2 gap-px bg-outline-variant/20">
                 {[
-                  { icon: GitBranch, label: 'DEVOPS_L1', value: 'Docker_45%', color: 'text-primary' },
-                  { icon: Network, label: 'SYST_L2', value: 'Linux_58%', color: 'text-secondary' },
-                  { icon: Activity, label: 'WORKFLOW_L3', value: 'Github Actions_40%', color: 'text-primary' },
-                  { icon: TerminalIcon, label: 'CORE_L4', value: 'Vim_70%', color: 'text-secondary' },
+                  { icon: GitBranch, label: 'AI_VISION', value: 'PyTorch_88%', color: 'text-primary' },
+                  { icon: Network, label: 'SECURITY_OPS', value: 'Honeypot_78%', color: 'text-secondary' },
+                  { icon: Activity, label: 'CONTAINERS', value: 'Docker_80%', color: 'text-primary' },
+                  { icon: TerminalIcon, label: 'SYSTEMS_CORE', value: 'Linux_85%', color: 'text-secondary' },
                 ].map((item, i) => (
                   <div key={i} className="bg-surface-container p-4 md:p-6 flex flex-col justify-between">
                     <item.icon className={`w-5 h-5 ${item.color} mb-4`} />
@@ -345,8 +346,18 @@ export default function Skills({ onMatrixToggle, onPartyToggle, onThemeChange, i
               <div className="border border-outline-variant/10">
                 <LogItem 
                   date="2026 — PRESENT"
-                  title="Fullstack Architect / Independent Development"
-                  description="Currently building AI-based failure prediction and self-healing systems for CI/CD pipelines while maintaining clean, scalable full-stack architectures."
+                  title="Computer Vision & Applied AI Research"
+                  description="Engineering Agro-Vision-AI models for real-time agricultural crop disease diagnosis, precision farming analytics, and automated visual heuristics."
+                />
+                <LogItem 
+                  date="2026"
+                  title="Healthcare Systems & Grassroots Diagnostics"
+                  description="Architecting offline-first digital assistants for rural community health workers with responsive clinical workflows and resilient local storage."
+                />
+                <LogItem 
+                  date="2025 — 2026"
+                  title="Dynamic Cyber-Defense Decoys & Honeypots"
+                  description="Implementing adaptive honeypot decoy networks capturing and profiling real-time intrusion tactics across virtualized Linux environments."
                 />
               </div>
             </section>

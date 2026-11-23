@@ -5,9 +5,10 @@ interface ProjectCardProps {
   description: string;
   image: string;
   tags: string[];
+  link?: string;
 }
 
-export default function ProjectCard({ title, description, image, tags }: ProjectCardProps) {
+export default function ProjectCard({ title, description, image, tags, link }: ProjectCardProps) {
   return (
     <motion.div
       whileHover={{ y: -8 }}
@@ -28,16 +29,20 @@ export default function ProjectCard({ title, description, image, tags }: Project
           </span>
         ))}
       </div>
-      <div className="p-6 flex-grow">
-        <h3 className="headline-font text-xl font-bold mb-4 group-hover:text-primary transition-colors">{title}</h3>
-        <p className="text-sm text-tertiary mb-6 line-clamp-2">{description}</p>
+      <div className="p-6 flex-grow flex flex-col justify-between">
+        <div>
+          <h3 className="headline-font text-xl font-bold mb-4 group-hover:text-primary transition-colors">{title}</h3>
+          <p className="text-sm text-tertiary mb-6 line-clamp-2">{description}</p>
+        </div>
         <div className="flex gap-4">
-          <button className="px-4 py-2 border border-primary text-primary text-xs label-font uppercase hover:bg-primary hover:text-on-primary transition-all duration-300">
-            Live {"<~>"}
-          </button>
-          <button className="px-4 py-2 border border-outline-variant text-tertiary text-xs label-font uppercase hover:bg-surface-container transition-all">
-            Cached {">="}
-          </button>
+          <a
+            href={link || "#"}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-4 py-2 border border-primary text-primary text-xs label-font uppercase hover:bg-primary hover:text-on-primary transition-all duration-300 inline-block text-center"
+          >
+            GitHub {"<~>"}
+          </a>
         </div>
       </div>
     </motion.div>

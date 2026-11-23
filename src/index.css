@@ -98,6 +98,133 @@
   border-radius: 0 !important;
 }
 
+/* Cyberpunk Neon Theme */
+[data-theme="cyberpunk"] {
+  --color-primary: #00F0FF !important;
+  --color-primary-container: #00F0FF !important;
+  --color-secondary: #FFE600 !important;
+  --color-surface: #0B0A16 !important;
+  --color-background: #0B0A16 !important;
+  --color-surface-container: #141226 !important;
+  --color-surface-container-low: #0F0E1E !important;
+  --color-surface-container-lowest: #07060F !important;
+  --color-surface-container-high: #1E1B38 !important;
+  --color-surface-container-highest: #28244D !important;
+  --color-tertiary: #FF2A85 !important;
+  --color-on-surface: #F0F4FF !important;
+  --color-on-surface-variant: #C2C8EA !important;
+  --color-syntax-cyan: #00F0FF !important;
+  --color-syntax-green: #FFE600 !important;
+  --color-outline-variant: #00F0FF25 !important;
+  filter: contrast(1.08) brightness(1.02);
+}
+
+/* Matrix Terminal Theme */
+[data-theme="matrix"] {
+  --color-primary: #00FF66 !important;
+  --color-primary-container: #00FF66 !important;
+  --color-secondary: #008F11 !important;
+  --color-surface: #050C07 !important;
+  --color-background: #050C07 !important;
+  --color-surface-container: #0A170E !important;
+  --color-surface-container-low: #07120A !important;
+  --color-surface-container-lowest: #020603 !important;
+  --color-surface-container-high: #102416 !important;
+  --color-surface-container-highest: #173320 !important;
+  --color-tertiary: #52B788 !important;
+  --color-on-surface: #E8F5E9 !important;
+  --color-on-surface-variant: #A3D9A5 !important;
+  --color-syntax-cyan: #00FF66 !important;
+  --color-syntax-green: #00FF66 !important;
+  --color-outline-variant: #00FF6625 !important;
+}
+
+/* Synthwave Sunset Theme */
+[data-theme="synthwave"] {
+  --color-primary: #FF71CE !important;
+  --color-primary-container: #FF71CE !important;
+  --color-secondary: #01CDFE !important;
+  --color-surface: #1B0F2A !important;
+  --color-background: #1B0F2A !important;
+  --color-surface-container: #26163C !important;
+  --color-surface-container-low: #1F1231 !important;
+  --color-surface-container-lowest: #140A20 !important;
+  --color-surface-container-high: #321E4E !important;
+  --color-surface-container-highest: #3E2561 !important;
+  --color-tertiary: #B967FF !important;
+  --color-on-surface: #FFF1FD !important;
+  --color-on-surface-variant: #E8C1F5 !important;
+  --color-syntax-cyan: #01CDFE !important;
+  --color-syntax-green: #05FFA1 !important;
+  --color-outline-variant: #FF71CE25 !important;
+}
+
+/* Tokyo Night Theme */
+[data-theme="tokyo"] {
+  --color-primary: #7AA2F7 !important;
+  --color-primary-container: #7AA2F7 !important;
+  --color-secondary: #BB9AF7 !important;
+  --color-surface: #1A1B26 !important;
+  --color-background: #1A1B26 !important;
+  --color-surface-container: #24283B !important;
+  --color-surface-container-low: #1F2335 !important;
+  --color-surface-container-lowest: #16161E !important;
+  --color-surface-container-high: #2F354F !important;
+  --color-surface-container-highest: #3B4261 !important;
+  --color-tertiary: #9ECE6A !important;
+  --color-on-surface: #C0CAF5 !important;
+  --color-on-surface-variant: #A9B1D6 !important;
+  --color-syntax-cyan: #7DCFFF !important;
+  --color-syntax-green: #9ECE6A !important;
+  --color-outline-variant: #7AA2F720 !important;
+}
+
+/* Amber Hacker CRT Theme */
+[data-theme="amber"] {
+  --color-primary: #FFB000 !important;
+  --color-primary-container: #FFB000 !important;
+  --color-secondary: #FFCC00 !important;
+  --color-surface: #120C00 !important;
+  --color-background: #120C00 !important;
+  --color-surface-container: #1C1300 !important;
+  --color-surface-container-low: #170F00 !important;
+  --color-surface-container-lowest: #0A0600 !important;
+  --color-surface-container-high: #261A00 !important;
+  --color-surface-container-highest: #332200 !important;
+  --color-tertiary: #E09800 !important;
+  --color-on-surface: #FFE8B2 !important;
+  --color-on-surface-variant: #FFD480 !important;
+  --color-syntax-cyan: #FFB000 !important;
+  --color-syntax-green: #FFCC00 !important;
+  --color-outline-variant: #FFB00025 !important;
+}
+
+/* Bauhaus Architectural Theme (Matte Black, Bauhaus Crimson Red & Cobalt Blue) */
+[data-theme="bauhaus"] {
+  --color-primary: #E63946 !important;
+  --color-primary-container: #E63946 !important;
+  --color-on-primary: #FFFFFF !important;
+  --color-on-primary-container: #FFFFFF !important;
+  --color-secondary: #0055FF !important;
+  --color-surface: #141416 !important;
+  --color-background: #141416 !important;
+  --color-surface-container: #1C1D21 !important;
+  --color-surface-container-low: #18191C !important;
+  --color-surface-container-lowest: #0E0E10 !important;
+  --color-surface-container-high: #24252B !important;
+  --color-surface-container-highest: #2E3037 !important;
+  --color-tertiary: #8E92A0 !important;
+  --color-on-surface: #F4F4F6 !important;
+  --color-on-surface-variant: #C2C5D1 !important;
+  --color-syntax-cyan: #0055FF !important;
+  --color-syntax-green: #E63946 !important;
+  --color-outline-variant: #E6394625 !important;
+}
+
+[data-theme="bauhaus"] *:not(.rounded-full) {
+  border-radius: 2px !important;
+}
+
 
 
 @layer utilities {

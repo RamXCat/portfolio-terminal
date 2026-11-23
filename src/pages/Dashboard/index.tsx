@@ -21,22 +21,39 @@ import ParallaxSection from "../../components/ParallaxSection";
 
 const PROJECTS = [
   {
-    title: "AI_FAILURE_PREDICTION",
-    description: "Intelligent CI/CD framework leveraging machine learning for real-time failure prediction and autonomous self-healing.",
+    title: "AGRO-VISION-AI",
+    description: "AI-driven computer vision system for real-time agricultural crop disease detection, precision farming analytics, and yield health monitoring.",
+    image: "https://images.unsplash.com/photo-1574943320219-553eb213f72d?q=80&w=2070&auto=format&fit=crop",
+    tags: ["Python", "PyTorch", "OpenCV", "FastAPI"],
+    link: "https://github.com/RamXCat/Agro-Vision-AI"
+  },
+  {
+    title: "VILLAGE-HEALTH-WORKER",
+    description: "Offline-capable digital assistant empowering grassroots rural healthcare workers with clinical diagnostic workflows and patient records.",
+    image: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2070&auto=format&fit=crop",
+    tags: ["React", "TypeScript", "PWA", "Healthcare"],
+    link: "https://github.com/RamXCat/Village-Health-Worker-Digital-Assistant"
+  },
+  {
+    title: "ADAPTIVE-HONEYPOT",
+    description: "Intelligent cyber-defense decoy system that dynamically adapts deception layers to capture and analyze threat actor TTPs in real-time.",
+    image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?q=80&w=2070&auto=format&fit=crop",
+    tags: ["Cybersecurity", "Python", "Networking", "Linux"],
+    link: "https://github.com/RamXCat/adaptive-honeypot"
+  },
+  {
+    title: "AUTONEXT-COC",
+    description: "Automated base reconnaissance and resource-matching engine leveraging screen vision and heuristic algorithms.",
+    image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop",
+    tags: ["Automation", "Python", "OpenCV", "Algorithms"],
+    link: "https://github.com/RamXCat/AutoNext-clash-of-clans"
+  },
+  {
+    title: "PORTFOLIO-TERMINAL",
+    description: "Interactive hacker portfolio featuring retro Linux pseudoterminal, KDE wobbly rubber window physics, DOM demolition physics, and audio FX.",
     image: "/ci_cd.png",
-    tags: ["Java", "ML", "DevOps"]
-  },
-  {
-    title: "WASTE_MANAGEMENT",
-    description: "Full-stack web application for smart waste collection management with real-time tracking and admin portals.",
-    image: "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?q=80&w=2070&auto=format&fit=crop",
-    tags: ["SpringBoot", "React", "MySQL"]
-  },
-  {
-    title: "TASK_REMINDER",
-    description: "Modern Android application built with Kotlin featuring smart reminders and MVVM architecture.",
-    image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=2070&auto=format&fit=crop",
-    tags: ["Kotlin", "Room", "Worker"]
+    tags: ["React", "TypeScript", "Tailwind", "WebAudio"],
+    link: "https://github.com/RamXCat/portfolio-terminal"
   }
 ];
 
@@ -48,9 +65,9 @@ const SKILLS = [
   { title: "Frameworks", items: ["SpringBoot", "React"] }
 ];
 
-export default function Dashboard({ onMatrixToggle, onPartyToggle, onThemeChange, isTerminalOpen, setIsTerminalOpen }: { 
-  onMatrixToggle: () => void, 
-  onPartyToggle: () => void, 
+export default function Dashboard({ onMatrixToggle, onPartyToggle, onThemeChange, isTerminalOpen, setIsTerminalOpen }: {
+  onMatrixToggle: () => void,
+  onPartyToggle: () => void,
   onThemeChange: (theme: string) => void,
   isTerminalOpen: boolean,
   setIsTerminalOpen: (open?: boolean) => void
@@ -101,7 +118,7 @@ export default function Dashboard({ onMatrixToggle, onPartyToggle, onThemeChange
             <Link
               key={item}
               to={item === 'ABOUT-ME' ? '/about' : `/${item.toLowerCase()}`}
-              className="nav-link text-tertiary label-font tracking-wide text-[10px] hover:text-primary transition-all font-bold uppercase"
+              className="nav-link text-tertiary label-font tracking-wider text-xs md:text-sm hover:text-primary transition-all font-semibold uppercase"
             >
               #{item}
             </Link>
@@ -169,7 +186,7 @@ export default function Dashboard({ onMatrixToggle, onPartyToggle, onThemeChange
 
 
       {/* Side Decorations */}
-      <motion.div 
+      <motion.div
         initial={{ rotate: -2 }}
         animate={{ rotate: 2 }}
         transition={{

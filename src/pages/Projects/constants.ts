@@ -2,70 +2,68 @@ import { Project, Stat } from './types';
 
 export const PROJECTS: Project[] = [
   {
-    id: 'neural-mesh',
-    title: 'Neural_Mesh',
-    description: 'A high-performance generative neural visualization engine. Utilizing custom shaders to render 1M+ nodes in real-time within a browser environment.',
-    tags: ['REACT', 'THREE.JS', 'WEBGL'],
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD7eSldxEzOkwXeelTE7TJmyAaFyrdadAyBBThOPJG9CqCxSR2fxyEjv-jW7r7_6fsryi_jaQl4AOrMrqGUEXRzEsZcmUw5bVBeCDFtnmG0UeqUWXQ2U8DoxbhVeawgmLbpMi-Y5jPBR3I2xkNmWMMkWVkYA_rMpWqXiokGgEeJoKyjSA_1YK4xjbtgqiwKYE6IeiddeBy_ISPQJa3jL6EVxcr_33PnAM_iJLFYfch35cSbXAgShy3e4xcy9Dg3wOtpMMsWtE9Qju7v',
-    version: 'v2.4.0',
+    id: 'agro-vision-ai',
+    title: 'Agro-Vision-AI',
+    description: 'AI-driven computer vision system for real-time agricultural crop disease detection, precision farming analytics, and yield health monitoring.',
+    tags: ['PYTHON', 'PYTORCH', 'COMPUTER-VISION', 'FASTAPI'],
+    image: 'https://images.unsplash.com/photo-1574943320219-553eb213f72d?q=80&w=2070&auto=format&fit=crop',
+    version: 'v1.4.0',
     featured: true,
-    link: '#',
-    source: '#',
-    category: 'EXPERIMENT'
+    link: 'https://github.com/RamXCat/Agro-Vision-AI',
+    source: 'https://github.com/RamXCat/Agro-Vision-AI',
+    category: 'AI & VISION'
   },
   {
-    id: 'cypher-dash',
-    title: 'Cypher_Dash',
-    description: 'Cyber-security dashboard interface for real-time packet monitoring and threat detection telemetry.',
-    tags: ['NEXT.JS', 'TAILWIND'],
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD0yMiqVuCsgDhr3wzooIJvw8j1MP1qKGfJmrQoFfNnBsysI571JjngG1cgHWqAEAaMPXtOaAr2xtIGcOxLuEzjqR3uzSy54gbH8WUIGYlu2a6JOnETTmALC__DSL6rUnuoLUzM8AZjJTFc4cYgkBlZymsRMY-XxPU_G2ArrItcNl88EnaqYxE4BEu6dxXyDeNg1MT7bHDhyV3elVxqdvkpCUgV2Cp1uBEQbtV1Dfve9XX5V9zB3YUqJ6ZcaCHp8bAiCCwByukI59q_',
-    link: '#'
+    id: 'village-health-worker-digital-assistant',
+    title: 'Village-Health-Worker-Digital-Assistant',
+    description: 'Offline-capable digital assistant empowering grassroots rural healthcare workers with clinical diagnostic workflows, patient records, and immunization tracking.',
+    tags: ['REACT', 'TYPESCRIPT', 'PWA', 'HEALTH-TECH'],
+    image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2070&auto=format&fit=crop',
+    version: 'v2.1.0',
+    featured: true,
+    link: 'https://github.com/RamXCat/Village-Health-Worker-Digital-Assistant',
+    source: 'https://github.com/RamXCat/Village-Health-Worker-Digital-Assistant',
+    category: 'HEALTHCARE'
   },
   {
-    id: 'k8s-commander',
-    title: 'K8s_Commander',
-    description: 'Terminal-based orchestration tool for managing complex microservice architectures across multi-cloud environments.',
-    tags: ['GO', 'KUBERNETES', 'DOCKER'],
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA-Sc0bozSz2X6Gnf7UiG_19fAVJ8obOmT0rTGmHDEHyyWbT07Nub6RorFTQDc36Yghj2qw8cG7WKB52fJzdDeJL0zr0Qk3xa31WkSrEP8l2rHUBd0dI-i0SWkBWFDmyqAMOprNN2ftLaVgkC8BBSiTZ19i5bQTfrDP_ThSJIhfky6oTZcxxLoTzQ_MaBmgXCcyeWvxOnxGo0kKNcGTCSGnGkIQXmOIdwoftLTiB0ga9Qt-Js1WFtGWg4PsjUY580TUk9gEoGEc4eQ1',
-    link: '#'
+    id: 'adaptive-honeypot',
+    title: 'adaptive-honeypot',
+    description: 'Intelligent cyber-defense decoy system that dynamically adapts network deception layers and behavioral traps to capture and analyze threat actor TTPs in real-time.',
+    tags: ['CYBERSECURITY', 'PYTHON', 'NETWORKING', 'LINUX'],
+    image: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?q=80&w=2070&auto=format&fit=crop',
+    version: 'v1.0.8',
+    featured: true,
+    link: 'https://github.com/RamXCat/adaptive-honeypot',
+    source: 'https://github.com/RamXCat/adaptive-honeypot',
+    category: 'SECURITY'
   },
   {
-    id: 'prism-core',
-    title: 'Prism_Core',
-    description: 'A low-latency image processing engine compiled to WebAssembly. Achieving native performance for real-time filtering and prism-refraction effects.',
-    tags: ['RUST', 'WASM'],
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDXDiy9kVyVXxyxMKy9MFCGreouaj8W54cMyFHg_q1OQ7i43lS5fiw8D8yX0Ft79Ly-S7RBYDFCb28dZ_4mHhXDGVyr6HgzOew8bpkFa4xDNHKxPyclcG2tJX1uckB-k30gJw_ctl8WowZXpYT8o03DfofU83KYsKs18q5p5GS4ZKfzapnryO5HjL1pTJcw3i5b6wOFnrvNoVL_gWL2aW6goZWzxiraM7IBRbKzO_WvHtrLsxT-gP7w7ydODHwIvsNb1mo1xF9k1gNT',
-    link: '#',
-    category: 'PERFORMANCE'
+    id: 'autonext-clash-of-clans',
+    title: 'AutoNext-clash-of-clans',
+    description: 'Automated base reconnaissance and resource-matching engine leveraging screen vision and heuristic heuristics for optimized matchmaking routines.',
+    tags: ['AUTOMATION', 'PYTHON', 'OPENCV', 'ALGORITHMS'],
+    image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop',
+    version: 'v3.2.0',
+    link: 'https://github.com/RamXCat/AutoNext-clash-of-clans',
+    source: 'https://github.com/RamXCat/AutoNext-clash-of-clans',
+    category: 'AUTOMATION'
   },
   {
-    id: 'spectral-docs',
-    title: 'Spectral_Docs',
-    description: 'Automated technical documentation generator that analyzes codebase semantics to create interactive spectral diagrams.',
-    tags: ['PYTHON', 'AI'],
-    image: '', // No image in original for this one, it's a text-heavy card
-    link: '#'
-  },
-  {
-    id: 'void-engine',
-    title: 'Void_Engine',
-    description: 'Experimental game engine architecture focusing on voxel-based ray tracing and zero-latency physics simulations.',
-    tags: ['C++', 'VULKAN'],
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBfRtEWVSzUENnDn9J0lmqVEiQ9RSIyjTsQvb1cqU-cRuDuc4ZzqDn9pgbzzi7KSqjxkFlUIhMmMAO85nZeokhHsdj5yYCaB0UbWaPFYpCIBjJ7klM7i0yAPPHT7EjaDbg0ry9bmbxOWDdcT9Z5QbS2NzcOqv866eRNAQQcLgTg9gZVpu4V0ePVxu5FNg6Wb1RN1bXG8t9Jy5cirfXRPtO3g6J1MNBk1hhu0knwep7DsvMARCXzeWOHFsGuoOGQFIDrEYTe23w8Cc26',
-    link: '#'
-  },
-  {
-    id: 'neon-auth',
-    title: 'Neon_Auth',
-    description: 'A biometric-first authentication layer designed for high-security decentralised applications.',
-    tags: ['TYPESCRIPT', 'AUTH0'],
-    image: '', // Special styled card
-    link: '#'
+    id: 'portfolio-terminal',
+    title: 'portfolio-terminal',
+    description: 'High-performance interactive hacker portfolio featuring retro Linux pseudoterminal, KDE wobbly rubber window physics, DOM demolition physics, and multi-theme architecture.',
+    tags: ['REACT', 'TYPESCRIPT', 'TAILWIND', 'WEB-AUDIO'],
+    image: '/ci_cd.png',
+    version: 'v4.5.0',
+    featured: true,
+    link: 'https://github.com/RamXCat/portfolio-terminal',
+    source: 'https://github.com/RamXCat/portfolio-terminal',
+    category: 'SYSTEMS'
   }
 ];
 
 export const STATS: Stat[] = [
-  { label: 'TOTAL_REPOS', value: '128', color: 'primary' },
+  { label: 'ACTIVE_REPOS', value: '5', color: 'primary' },
   { label: 'CONTRIBUTIONS', value: '4,821', color: 'secondary' },
   { label: 'UPTIME', value: '99.98%', color: 'tertiary' },
   { label: 'BUILD_STATUS', value: 'STABLE', color: 'primary' }
