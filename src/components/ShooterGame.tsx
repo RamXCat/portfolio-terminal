@@ -523,6 +523,104 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
   const [currentWeapon, setCurrentWeapon] = useState<WeaponType>('RIFLE');
   const [totalDOMCount, setTotalDOMCount] = useState(100);
   const [isMuted, setIsMuted] = useState(false);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+
+  useEffect(() => {
+    setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
+  }, []);
+
+  // Virtual Joystick touch state
+  const joystickRef = useRef<{ active: boolean; touchId: number | null; startX: number; startY: number; currX: number; currY: number }>({
+    active: false,
+    touchId: null,
+    startX: 0,
+    startY: 0,
+    currX: 0,
+    currY: 0
+  });
+  // Weapon cycle helper for Gamepad Y button
+  const cycleWeapon = () => {
+    const list: WeaponType[] = ['RIFLE', 'SHOTGUN', 'ROCKET', 'LASER', 'NUKE'];
+    const idx = list.indexOf(currentWeapon);
+    const next = list[(idx + 1) % list.length];
+    setCurrentWeapon(next);
+  };
+
+  // Mobile Touch Handlers for Virtual Joystick
+  const handleJoystickTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    const touch = e.changedTouches[0];
+    const rect = e.currentTarget.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    joystickRef.current = {
+      active: true,
+      touchId: touch.identifier,
+      startX: centerX,
+      startY: centerY,
+      currX: touch.clientX,
+      currY: touch.clientY
+    };
+    const dx = Math.max(-32, Math.min(32, touch.clientX - centerX));
+    const dy = Math.max(-32, Math.min(32, touch.clientY - centerY));
+    setJoystickVisual({ active: true, dx, dy });
+  };
+
+  const handleJoystickTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    if (!joystickRef.current.active) return;
+    for (let i = 0; i < e.changedTouches.length; i++) {
+      const touch = e.changedTouches[i];
+      if (touch.identifier === joystickRef.current.touchId) {
+        joystickRef.current.currX = touch.clientX;
+        joystickRef.current.currY = touch.clientY;
+        const rawDx = touch.clientX - joystickRef.current.startX;
+        const rawDy = touch.clientY - joystickRef.current.startY;
+        const dist = Math.hypot(rawDx, rawDy);
+        const maxDist = 36;
+        const angle = Math.atan2(rawDy, rawDx);
+        const clampedDist = Math.min(dist, maxDist);
+        const dx = Math.cos(angle) * clampedDist;
+        const dy = Math.sin(angle) * clampedDist;
+        setJoystickVisual({ active: true, dx, dy });
+        break;
+      }
+    }
+  };
+
+  const handleJoystickTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    for (let i = 0; i < e.changedTouches.length; i++) {
+      if (e.changedTouches[i].identifier === joystickRef.current.touchId) {
+        joystickRef.current.active = false;
+        joystickRef.current.touchId = null;
+        setJoystickVisual({ active: false, dx: 0, dy: 0 });
+        break;
+      }
+    }
+  };
+
+  // Gamepad action button touch handlers
+  const handleFireStart = (e: React.TouchEvent | React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    mousePos.current.isDown = true;
+  };
+  const handleFireEnd = (e: React.TouchEvent | React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    mousePos.current.isDown = false;
+  };
+  const handleJumpStart = (e: React.TouchEvent | React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    keysPressed.current['touch_jump'] = true;
+  };
+  const handleJumpEnd = (e: React.TouchEvent | React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    keysPressed.current['touch_jump'] = false;
+  };
 
   const toggleMute = () => {
     soundEngine.isMuted = !soundEngine.isMuted;
@@ -629,9 +727,27 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
       keysPressed.current[e.key.toLowerCase()] = false;
     };
 
+    const handleTouchAim = (e: TouchEvent) => {
+      // Find touches that aren't on the joystick or action buttons
+      for (let i = 0; i < e.touches.length; i++) {
+        const touch = e.touches[i];
+        const targetEl = document.elementFromPoint(touch.clientX, touch.clientY);
+        if (targetEl?.closest('.game-hud-control') || targetEl?.closest('.mobile-gamepad')) continue;
+        mousePos.current.x = touch.clientX;
+        mousePos.current.y = touch.clientY;
+        const pivotY = playerRef.current.y + playerRef.current.height / 2 - 2;
+        const dx = touch.clientX - (playerRef.current.x + playerRef.current.facing * 2);
+        const dy = touch.clientY - pivotY;
+        playerRef.current.angle = Math.atan2(dy, dx);
+        playerRef.current.facing = dx >= 0 ? 1 : -1;
+      }
+    };
+
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('mousedown', handleMouseDown);
     window.addEventListener('mouseup', handleMouseUp);
+    window.addEventListener('touchmove', handleTouchAim, { passive: true });
+    window.addEventListener('touchstart', handleTouchAim, { passive: true });
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
 
@@ -972,19 +1088,37 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
       const acceleration = 0.85;
       const friction = 0.84;
 
-      // Horizontal controls (A / D / Arrow Keys)
-      if (keysPressed.current['a'] || keysPressed.current['arrowleft']) {
-        p.vx = Math.max(-maxSpeed, p.vx - acceleration);
+      // Horizontal controls (A / D / Arrow Keys + Virtual Joystick)
+      let joyX = 0;
+      let joyY = 0;
+      if (joystickRef.current.active) {
+        const dx = joystickRef.current.currX - joystickRef.current.startX;
+        const dy = joystickRef.current.currY - joystickRef.current.startY;
+        const dist = Math.hypot(dx, dy);
+        if (dist > 8) {
+          joyX = Math.max(-1, Math.min(1, dx / 40));
+          joyY = Math.max(-1, Math.min(1, dy / 40));
+          // Face in direction of joystick
+          if (Math.abs(joyX) > 0.25) {
+            p.facing = joyX > 0 ? 1 : -1;
+          }
+        }
+      }
+
+      if (keysPressed.current['a'] || keysPressed.current['arrowleft'] || joyX < -0.2) {
+        const intensity = joyX < -0.2 ? Math.abs(joyX) : 1;
+        p.vx = Math.max(-maxSpeed, p.vx - acceleration * intensity);
         p.walkFrame += 0.2;
-      } else if (keysPressed.current['d'] || keysPressed.current['arrowright']) {
-        p.vx = Math.min(maxSpeed, p.vx + acceleration);
+      } else if (keysPressed.current['d'] || keysPressed.current['arrowright'] || joyX > 0.2) {
+        const intensity = joyX > 0.2 ? joyX : 1;
+        p.vx = Math.min(maxSpeed, p.vx + acceleration * intensity);
         p.walkFrame += 0.2;
       } else {
         p.vx *= friction;
       }
 
-      // Jump / Jetpack controls (W / Space / Up Arrow)
-      const isJumpKeyDown = keysPressed.current['w'] || keysPressed.current[' '] || keysPressed.current['arrowup'];
+      // Jump / Jetpack controls (W / Space / Up Arrow / Joystick UP / Button A)
+      const isJumpKeyDown = keysPressed.current['w'] || keysPressed.current[' '] || keysPressed.current['arrowup'] || keysPressed.current['touch_jump'] || joyY < -0.45;
       if (isJumpKeyDown) {
         if (p.isGrounded) {
           p.vy = -12.5; // High initial jump
@@ -1558,8 +1692,8 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
         </div>
       </div>
 
-      {/* Jetpack Fuel Gauge & Controls HUD (Bottom Left) */}
-      <div className="game-hud-control fixed bottom-6 left-6 px-4 py-3 bg-[#090b0e]/90 backdrop-blur-xl border border-outline-variant/25 rounded-xl text-[11px] font-mono text-tertiary space-y-2 pointer-events-none hidden sm:block">
+      {/* Jetpack Fuel Gauge & Controls HUD (Bottom Left on Desktop) */}
+      <div className="game-hud-control fixed bottom-6 left-6 px-4 py-3 bg-[#090b0e]/90 backdrop-blur-xl border border-outline-variant/25 rounded-xl text-[11px] font-mono text-tertiary space-y-2 pointer-events-none hidden md:block">
         <div className="flex items-center justify-between text-[10px] text-primary font-bold">
           <span>JETPACK THRUSTERS</span>
           <span>SPACE / W</span>
@@ -1577,6 +1711,104 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
           <div><span className="text-white font-bold">1 - 5</span>: Switch Weapons</div>
           <div><span className="text-white font-bold">R</span>: Rebuild Website</div>
         </div>
+      </div>
+
+      {/* ============================================================== */}
+      {/* MOBILE TOUCH CONTROLS: VIRTUAL JOYSTICK (LEFT) + X, A, B, Y (RIGHT) */}
+      {/* ============================================================== */}
+      <div className="mobile-gamepad fixed inset-0 pointer-events-none z-[100000] select-none block md:hidden">
+        
+        {/* Floating Mobile Jetpack Fuel Indicator (Top Left under HUD) */}
+        <div className="fixed top-20 left-4 px-3 py-1.5 bg-[#090B0E]/85 backdrop-blur-md rounded-full border border-primary/30 flex items-center gap-2 font-mono text-[9px] text-white">
+          <span className="text-primary font-bold">FUEL</span>
+          <div className="w-16 h-1.5 bg-white/20 rounded-full overflow-hidden">
+            <div 
+              className="h-full bg-gradient-to-r from-primary to-[#00F0FF] transition-all"
+              style={{ width: `${playerRef.current.jetpackFuel}%` }}
+            />
+          </div>
+        </div>
+
+        {/* 1. VIRTUAL JOYSTICK (Bottom-Left) */}
+        <div 
+          onTouchStart={handleJoystickTouchStart}
+          onTouchMove={handleJoystickTouchMove}
+          onTouchEnd={handleJoystickTouchEnd}
+          onTouchCancel={handleJoystickTouchEnd}
+          className="fixed bottom-6 left-5 w-32 h-32 rounded-full bg-black/40 backdrop-blur-md border-2 border-primary/40 shadow-[0_0_25px_rgba(199,120,221,0.25)] flex items-center justify-center pointer-events-auto touch-none"
+        >
+          {/* Directional Guides */}
+          <div className="absolute top-2 text-[9px] font-mono text-tertiary/70 font-bold">▲</div>
+          <div className="absolute bottom-2 text-[9px] font-mono text-tertiary/70 font-bold">▼</div>
+          <div className="absolute left-2 text-[9px] font-mono text-tertiary/70 font-bold">◀</div>
+          <div className="absolute right-2 text-[9px] font-mono text-tertiary/70 font-bold">▶</div>
+          
+          {/* Inner Joystick Thumb Knob */}
+          <div 
+            style={{ 
+              transform: `translate(${joystickVisual.dx}px, ${joystickVisual.dy}px)` 
+            }}
+            className={`w-14 h-14 rounded-full transition-transform duration-75 flex items-center justify-center font-mono text-xs font-bold ${
+              joystickVisual.active 
+                ? 'bg-primary text-black shadow-[0_0_20px_#C778DD] scale-105' 
+                : 'bg-white/20 text-white border border-white/30'
+            }`}
+          >
+            JOY
+          </div>
+        </div>
+
+        {/* 2. GAMEPAD ACTION BUTTONS: X, A, B, Y (Bottom-Right) */}
+        <div className="fixed bottom-6 right-5 w-36 h-36 relative pointer-events-auto touch-none">
+          {/* Top: Y Button (Switch Weapon) */}
+          <button
+            type="button"
+            onTouchStart={(e) => { e.preventDefault(); cycleWeapon(); }}
+            onClick={cycleWeapon}
+            className="absolute top-0 left-1/2 -translate-x-1/2 w-11 h-11 rounded-full bg-[#E5B537]/25 active:bg-[#E5B537] text-[#E5B537] active:text-black font-mono font-bold text-sm border-2 border-[#E5B537] shadow-[0_0_15px_rgba(229,181,55,0.4)] flex flex-col items-center justify-center leading-none"
+          >
+            <span>Y</span>
+            <span className="text-[7px] opacity-80">GUN</span>
+          </button>
+
+          {/* Left: X Button (Rebuild / Reset DOM) */}
+          <button
+            type="button"
+            onTouchStart={(e) => { e.preventDefault(); restoreElements(); }}
+            onClick={restoreElements}
+            className="absolute top-1/2 -translate-y-1/2 left-0 w-11 h-11 rounded-full bg-[#00F0FF]/25 active:bg-[#00F0FF] text-[#00F0FF] active:text-black font-mono font-bold text-sm border-2 border-[#00F0FF] shadow-[0_0_15px_rgba(0,240,255,0.4)] flex flex-col items-center justify-center leading-none"
+          >
+            <span>X</span>
+            <span className="text-[7px] opacity-80">RESET</span>
+          </button>
+
+          {/* Right: B Button (Fire / Shoot Primary Weapon) */}
+          <button
+            type="button"
+            onTouchStart={handleFireStart}
+            onTouchEnd={handleFireEnd}
+            onMouseDown={handleFireStart}
+            onMouseUp={handleFireEnd}
+            className="absolute top-1/2 -translate-y-1/2 right-0 w-12 h-12 rounded-full bg-[#FF2A85]/35 active:bg-[#FF2A85] text-[#FF2A85] active:text-white font-mono font-bold text-sm border-2 border-[#FF2A85] shadow-[0_0_20px_rgba(255,42,133,0.5)] flex flex-col items-center justify-center leading-none"
+          >
+            <span>B</span>
+            <span className="text-[7px] opacity-90">FIRE</span>
+          </button>
+
+          {/* Bottom: A Button (Jump / Jetpack Thrusters) */}
+          <button
+            type="button"
+            onTouchStart={handleJumpStart}
+            onTouchEnd={handleJumpEnd}
+            onMouseDown={handleJumpStart}
+            onMouseUp={handleJumpEnd}
+            className="absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-12 rounded-full bg-[#00FF66]/35 active:bg-[#00FF66] text-[#00FF66] active:text-black font-mono font-bold text-sm border-2 border-[#00FF66] shadow-[0_0_20px_rgba(0,255,102,0.5)] flex flex-col items-center justify-center leading-none"
+          >
+            <span>A</span>
+            <span className="text-[7px] opacity-90">JUMP</span>
+          </button>
+        </div>
+
       </div>
     </div>
   );
