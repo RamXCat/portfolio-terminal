@@ -1087,10 +1087,12 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
       }
 
       // --- 2. Character Platformer Physics ---
+      const isMobile = isTouchDevice || ('ontouchstart' in window || navigator.maxTouchPoints > 0);
       const gravity = 0.58;
-      const maxSpeed = 7.5;
-      const acceleration = 0.85;
-      const friction = 0.84;
+      // Calibrate speed: 4.2 on mobile touch for smooth precision, 7.5 on desktop keyboard
+      const maxSpeed = isMobile ? 4.2 : 7.5;
+      const acceleration = isMobile ? 0.45 : 0.85;
+      const friction = isMobile ? 0.82 : 0.84;
 
       // Horizontal controls (A / D / Arrow Keys + Virtual Joystick)
       let joyX = 0;
@@ -1657,15 +1659,16 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
 
         <div className="h-6 sm:h-8 w-px bg-white/15 shrink-0"></div>
 
-        {/* Score & Telemetry */}
-        <div className="flex items-center gap-2 sm:gap-3 font-mono text-xs shrink-0">
-          <div>
-            <span className="text-tertiary opacity-60 text-[8px] sm:text-[10px] block leading-none">WRECKED</span>
-            <span className="text-[#FF2A85] font-bold text-xs sm:text-sm leading-none">{destroyedCount}</span>
+        {/* Dedicated Score & Wrecked Telemetry Mini-Box */}
+        <div className="flex items-center gap-2.5 sm:gap-3.5 px-2.5 sm:px-3.5 py-1 bg-[#05070a]/90 border border-primary/40 rounded-xl shadow-[inset_0_0_12px_rgba(0,0,0,0.6),0_0_15px_rgba(199,120,221,0.2)] font-mono shrink-0">
+          <div className="text-center">
+            <span className="text-tertiary/80 text-[8px] sm:text-[9px] uppercase tracking-wider block font-bold leading-none mb-0.5">WRECKED</span>
+            <span className="text-[#FF2A85] font-extrabold text-xs sm:text-sm leading-none">{destroyedCount}</span>
           </div>
-          <div>
-            <span className="text-tertiary opacity-60 text-[8px] sm:text-[10px] block leading-none">SCORE</span>
-            <span className="text-[#00F0FF] font-bold text-xs sm:text-sm leading-none">{score}</span>
+          <div className="w-px h-5 sm:h-6 bg-white/20"></div>
+          <div className="text-center min-w-[42px] sm:min-w-[50px]">
+            <span className="text-tertiary/80 text-[8px] sm:text-[9px] uppercase tracking-wider block font-bold leading-none mb-0.5">SCORE</span>
+            <span className="text-[#00F0FF] font-extrabold text-xs sm:text-sm leading-none">{score}</span>
           </div>
         </div>
 
