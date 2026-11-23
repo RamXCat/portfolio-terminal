@@ -1896,18 +1896,20 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
         </div>
 
         {/* 2. GAMEPAD ACTION BUTTONS & AIM-AND-FIRE JOYSTICK (Bottom-Right Glassmorphic Cluster) */}
-        <div className="fixed bottom-5 right-5 w-48 h-48 pointer-events-auto touch-none">
+        <div className="fixed bottom-5 right-5 w-52 h-52 pointer-events-auto touch-none">
           <div className="relative w-full h-full">
             
-            {/* Top-Right: GUN / CYCLE WEAPON Button (Glass Gold/Amber) */}
+            {/* Top-Right: ENLARGED JUMP & JETPACK THRUSTERS BUTTON (Placed on top-right where GUN was) */}
             <button
               type="button"
-              onTouchStart={(e) => { e.preventDefault(); cycleWeapon(); }}
-              onClick={cycleWeapon}
-              className="absolute top-1 right-2 w-12 h-12 rounded-full bg-amber-400/20 backdrop-blur-xl active:bg-amber-400/50 text-amber-300 font-mono font-bold text-sm border border-amber-400/40 shadow-[0_4px_20px_rgba(245,158,11,0.25),inset_0_1px_1px_rgba(255,255,255,0.3)] flex flex-col items-center justify-center leading-none active:scale-95 transition-all"
+              onTouchStart={handleJumpStart}
+              onTouchEnd={handleJumpEnd}
+              onMouseDown={handleJumpStart}
+              onMouseUp={handleJumpEnd}
+              className="absolute top-0 right-1 w-16 h-16 rounded-full bg-emerald-500/25 backdrop-blur-2xl active:bg-emerald-500/60 text-emerald-300 font-mono font-bold border-2 border-emerald-400/50 shadow-[0_8px_30px_rgba(16,185,129,0.35),inset_0_1px_2px_rgba(255,255,255,0.4)] flex flex-col items-center justify-center leading-none active:scale-95 transition-all z-10"
             >
-              <span>Y</span>
-              <span className="text-[7px] font-bold opacity-90 text-amber-200">GUN</span>
+              <span className="text-base font-extrabold text-white">JUMP</span>
+              <span className="text-[7px] font-bold opacity-90 text-emerald-200 mt-0.5">JETPACK</span>
             </button>
 
             {/* Top-Left: RESET DOM Button (Glass Cyan/Teal) */}
@@ -1915,7 +1917,7 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
               type="button"
               onTouchStart={(e) => { e.preventDefault(); restoreElements(); }}
               onClick={restoreElements}
-              className="absolute top-1 left-2 w-12 h-12 rounded-full bg-cyan-400/20 backdrop-blur-xl active:bg-cyan-400/50 text-cyan-300 font-mono font-bold text-sm border border-cyan-400/40 shadow-[0_4px_20px_rgba(6,182,212,0.25),inset_0_1px_1px_rgba(255,255,255,0.3)] flex flex-col items-center justify-center leading-none active:scale-95 transition-all"
+              className="absolute top-2 left-2 w-12 h-12 rounded-full bg-cyan-400/20 backdrop-blur-xl active:bg-cyan-400/50 text-cyan-300 font-mono font-bold text-sm border border-cyan-400/40 shadow-[0_4px_20px_rgba(6,182,212,0.25),inset_0_1px_1px_rgba(255,255,255,0.3)] flex flex-col items-center justify-center leading-none active:scale-95 transition-all z-10"
             >
               <span>X</span>
               <span className="text-[7px] font-bold opacity-90 text-cyan-200">RESET</span>
@@ -1927,7 +1929,7 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
               onTouchMove={handleFireJoystickTouchMove}
               onTouchEnd={handleFireJoystickTouchEnd}
               onTouchCancel={handleFireJoystickTouchEnd}
-              className="absolute top-12 right-0 w-24 h-24 rounded-full bg-rose-500/20 backdrop-blur-2xl border-2 border-rose-400/50 shadow-[0_8px_30px_rgba(244,63,94,0.35),inset_0_1px_2px_rgba(255,255,255,0.4)] flex items-center justify-center pointer-events-auto touch-none"
+              className="absolute bottom-2 right-0 w-24 h-24 rounded-full bg-rose-500/20 backdrop-blur-2xl border-2 border-rose-400/50 shadow-[0_8px_30px_rgba(244,63,94,0.35),inset_0_1px_2px_rgba(255,255,255,0.4)] flex items-center justify-center pointer-events-auto touch-none z-10"
             >
               {/* Subtle 360 Aim Crosshairs */}
               <div className="absolute top-1.5 text-[7px] font-mono text-rose-300/40">▲</div>
@@ -1951,17 +1953,15 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
               </div>
             </div>
 
-            {/* Bottom-Left: ENLARGED JUMP & JETPACK THRUSTERS BUTTON (Glass Emerald/Green) */}
+            {/* Bottom-Left: GUN / CYCLE WEAPON Button (Glass Gold/Amber, placed where JUMP was) */}
             <button
               type="button"
-              onTouchStart={handleJumpStart}
-              onTouchEnd={handleJumpEnd}
-              onMouseDown={handleJumpStart}
-              onMouseUp={handleJumpEnd}
-              className="absolute bottom-1 left-3 w-16 h-16 rounded-full bg-emerald-500/25 backdrop-blur-2xl active:bg-emerald-500/60 text-emerald-300 font-mono font-bold border-2 border-emerald-400/50 shadow-[0_8px_30px_rgba(16,185,129,0.35),inset_0_1px_2px_rgba(255,255,255,0.4)] flex flex-col items-center justify-center leading-none active:scale-95 transition-all"
+              onTouchStart={(e) => { e.preventDefault(); cycleWeapon(); }}
+              onClick={cycleWeapon}
+              className="absolute bottom-2 left-3 w-13 h-13 rounded-full bg-amber-400/20 backdrop-blur-xl active:bg-amber-400/50 text-amber-300 font-mono font-bold text-sm border-2 border-amber-400/45 shadow-[0_4px_20px_rgba(245,158,11,0.25),inset_0_1px_1px_rgba(255,255,255,0.3)] flex flex-col items-center justify-center leading-none active:scale-95 transition-all z-10"
             >
-              <span className="text-base font-extrabold text-white">JUMP</span>
-              <span className="text-[8px] font-bold opacity-90 text-emerald-200 mt-0.5">JETPACK</span>
+              <span className="text-sm font-extrabold">GUN</span>
+              <span className="text-[7px] font-bold opacity-90 text-amber-200 mt-0.5">CYCLE [Y]</span>
             </button>
 
           </div>
