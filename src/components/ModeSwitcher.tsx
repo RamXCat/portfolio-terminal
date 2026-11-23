@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { Terminal, Globe, Sparkles, Check, X, Palette, Gamepad2, Play, PartyPopper } from 'lucide-react';
+import React, { useState } from 'react';
+import { Check, X, Palette, Gamepad2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 export type PortfolioMode = 'terminal' | 'gui';
 
 interface ModeSwitcherProps {
-  currentMode: PortfolioMode;
-  onModeChange: (mode: PortfolioMode) => void;
+  currentMode?: PortfolioMode;
+  onModeChange?: (mode: PortfolioMode) => void;
   onOpenTerminal?: () => void;
   onThemeChange?: (theme: string) => void;
   currentTheme?: string;
@@ -28,21 +28,11 @@ const THEMES = [
 ];
 
 export default function ModeSwitcher({ 
-  currentMode, 
-  onModeChange, 
-  onOpenTerminal,
   onThemeChange,
   currentTheme = 'default',
   onGameToggle,
-  onMatrixToggle,
-  onPartyToggle
 }: ModeSwitcherProps) {
   const [showThemePicker, setShowThemePicker] = useState(false);
-
-  const selectMode = (mode: PortfolioMode) => {
-    localStorage.setItem('portfolio_view_mode', mode);
-    onModeChange(mode);
-  };
 
   return (
     <>
@@ -118,37 +108,6 @@ export default function ModeSwitcher({
               </AnimatePresence>
             </div>
           )}
-
-          <div className="h-4 w-px bg-white/15 mx-0.5"></div>
-
-          {/* Mode Selector Pill: Terminal+GUI vs Only GUI */}
-          <button
-            onClick={() => selectMode('terminal')}
-            title="Terminal + GUI: Interactive Linux Terminal with Full Website GUI"
-            className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full text-[11px] sm:text-xs font-mono transition-all cursor-pointer shrink-0 ${
-              currentMode === 'terminal'
-                ? 'bg-primary text-on-primary font-bold shadow-[0_0_15px_rgba(199,120,221,0.5)]'
-                : 'text-tertiary hover:text-white'
-            }`}
-          >
-            <Terminal className="w-3.5 h-3.5" />
-            <span className="hidden md:inline">Terminal + GUI</span>
-            <span className="md:hidden">Terminal</span>
-          </button>
-
-          <button
-            onClick={() => selectMode('gui')}
-            title="Only GUI: Clean, Standard Web Interface (No terminal popups)"
-            className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full text-[11px] sm:text-xs font-mono transition-all cursor-pointer shrink-0 ${
-              currentMode === 'gui'
-                ? 'bg-primary text-on-primary font-bold shadow-[0_0_15px_rgba(199,120,221,0.5)]'
-                : 'text-tertiary hover:text-white'
-            }`}
-          >
-            <Globe className="w-3.5 h-3.5" />
-            <span className="hidden md:inline">Only GUI</span>
-            <span className="md:hidden">GUI</span>
-          </button>
         </div>
       </div>
     </>
