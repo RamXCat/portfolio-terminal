@@ -525,11 +525,18 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
   const [currentWeapon, setCurrentWeapon] = useState<WeaponType>('RIFLE');
   const [totalDOMCount, setTotalDOMCount] = useState(100);
   const [isMuted, setIsMuted] = useState(false);
-  const [isTouchDevice, setIsTouchDevice] = useState(false);
-  const [joystickOnRight, setJoystickOnRight] = useState(true); // Default to right side per user request
+  const [isTouchDevice, setIsTouchDevice] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return 'ontouchstart' in window || navigator.maxTouchPoints > 0 || window.matchMedia('(pointer: coarse)').matches;
+  });
 
   useEffect(() => {
-    setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
+    const checkTouch = () => {
+      setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0 || window.matchMedia('(pointer: coarse)').matches);
+    };
+    checkTouch();
+    window.addEventListener('resize', checkTouch);
+    return () => window.removeEventListener('resize', checkTouch);
   }, []);
 
   // Virtual Joystick touch state
@@ -1708,33 +1715,35 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
         </div>
       </div>
 
-      {/* Jetpack Fuel Gauge & Controls HUD (Bottom Left on Desktop) */}
-      <div className="game-hud-control fixed bottom-6 left-6 px-4 py-3 bg-[#090b0e]/90 backdrop-blur-xl border border-outline-variant/25 rounded-xl text-[11px] font-mono text-tertiary space-y-2 pointer-events-none hidden md:block">
-        <div className="flex items-center justify-between text-[10px] text-primary font-bold">
-          <span>JETPACK THRUSTERS</span>
-          <span>SPACE / W</span>
+      {/* Jetpack Fuel Gauge & Controls HUD (Bottom Left on Desktop Non-Touch Screens) */}
+      {!isTouchDevice && (
+        <div className="game-hud-control fixed bottom-6 left-6 px-4 py-3 bg-[#090b0e]/90 backdrop-blur-xl border border-outline-variant/25 rounded-xl text-[11px] font-mono text-tertiary space-y-2 pointer-events-none hidden md:block">
+          <div className="flex items-center justify-between text-[10px] text-primary font-bold">
+            <span>JETPACK THRUSTERS</span>
+            <span>SPACE / W</span>
+          </div>
+          <div className="w-44 h-2 bg-surface-container-highest rounded-full overflow-hidden">
+            <div 
+              className="h-full bg-gradient-to-r from-primary to-[#00F0FF]"
+              style={{ width: `${playerRef.current.jetpackFuel}%` }}
+            />
+          </div>
+          <div className="text-[10px] opacity-70 leading-relaxed border-t border-white/10 pt-1.5 space-y-0.5">
+            <div><span className="text-white font-bold">A / D</span>: Run left/right</div>
+            <div><span className="text-white font-bold">W / Space</span>: Jump & Jetpack</div>
+            <div><span className="text-white font-bold">Left Click</span>: Fire weapon</div>
+            <div><span className="text-white font-bold">1 - 5</span>: Switch Weapons</div>
+            <div><span className="text-white font-bold">R</span>: Rebuild Website</div>
+          </div>
         </div>
-        <div className="w-44 h-2 bg-surface-container-highest rounded-full overflow-hidden">
-          <div 
-            className="h-full bg-gradient-to-r from-primary to-[#00F0FF]"
-            style={{ width: `${playerRef.current.jetpackFuel}%` }}
-          />
-        </div>
-        <div className="text-[10px] opacity-70 leading-relaxed border-t border-white/10 pt-1.5 space-y-0.5">
-          <div><span className="text-white font-bold">A / D</span>: Run left/right</div>
-          <div><span className="text-white font-bold">W / Space</span>: Jump & Jetpack</div>
-          <div><span className="text-white font-bold">Left Click</span>: Fire weapon</div>
-          <div><span className="text-white font-bold">1 - 5</span>: Switch Weapons</div>
-          <div><span className="text-white font-bold">R</span>: Rebuild Website</div>
-        </div>
-      </div>
+      )}
 
       {/* ============================================================== */}
-      {/* MOBILE TOUCH CONTROLS: JOYSTICK (LEFT) + ACTION BUTTONS (RIGHT) */}
+      {/* TOUCH CONTROLS: JOYSTICK (LEFT) + ACTION BUTTONS (RIGHT) FOR MOBILE & TABLETS */}
       {/* ============================================================== */}
-      <div className="mobile-gamepad fixed inset-0 pointer-events-none z-[100000] select-none block md:hidden">
+      <div className={`mobile-gamepad fixed inset-0 pointer-events-none z-[100000] select-none ${isTouchDevice ? 'block' : 'block md:hidden'}`}>
         
-        {/* Mobile Portrait Rotation Prompt (Shown on phones in portrait mode) */}
+        {/* Mobile/Tablet Portrait Rotation Prompt (Shown on touch devices in portrait mode) */}
         <div className="fixed inset-0 z-[100002] bg-[#090B0E]/95 backdrop-blur-xl flex flex-col items-center justify-center p-6 text-center select-none portrait:flex landscape:hidden pointer-events-auto">
           <div className="w-16 h-16 rounded-2xl bg-primary/20 border border-primary/50 flex items-center justify-center mb-4 text-primary animate-pulse shadow-[0_0_25px_rgba(199,120,221,0.4)]">
             <Smartphone className="w-8 h-8 rotate-90" />
@@ -1743,7 +1752,7 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
             Rotate to Landscape
           </h3>
           <p className="text-tertiary font-mono text-xs max-w-xs leading-relaxed mb-4">
-            DOMolition requires landscape mode for the dual-thumb gamepad. Rotate your phone sideways to play!
+            DOMolition requires landscape mode for the dual-thumb gamepad. Rotate your device sideways to play!
           </p>
           <div className="flex items-center gap-3">
             <button

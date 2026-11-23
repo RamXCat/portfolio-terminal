@@ -1,10 +1,10 @@
 // Cross-browser mobile landscape orientation and fullscreen utility
 
 export async function requestLandscape(): Promise<void> {
-  const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-  if (!isMobile) return;
+  const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || (window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
+  if (!isTouch) return;
 
-  // 1. Enter Fullscreen (Mandatory for screen.orientation.lock in modern mobile browsers)
+  // 1. Enter Fullscreen (Mandatory for screen.orientation.lock in modern mobile & tablet browsers)
   try {
     const docEl = document.documentElement as any;
     if (docEl.requestFullscreen) {
@@ -31,7 +31,7 @@ export async function requestLandscape(): Promise<void> {
       (screen as any).mozLockOrientation('landscape');
     }
   } catch (err) {
-    // Orientation lock not supported or blocked (e.g., iOS Safari)
+    // Orientation lock not supported or blocked (e.g., iPad Safari)
   }
 }
 
