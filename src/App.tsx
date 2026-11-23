@@ -7,6 +7,7 @@ import Notification from "./components/Notification";
 import CursorBubble from "./components/CursorBubble";
 import ScrollProgressBar from "./components/ScrollProgressBar";
 import ModeSwitcher, { PortfolioMode } from "./components/ModeSwitcher";
+import { requestLandscape, exitLandscape } from "./utils/orientation";
 
 // Lazy-load secondary pages, visual overlays and game for optimal bundle performance
 const Projects = lazy(() => import("./pages/Projects"));
@@ -32,7 +33,17 @@ export default function App() {
 
   const toggleMatrix = () => setIsMatrixActive(v => !v);
   const toggleParty = () => setIsPartyModeActive(v => !v);
-  const toggleGame = () => setIsGameActive(v => !v);
+  const toggleGame = () => {
+    setIsGameActive(prev => {
+      const next = !prev;
+      if (next) {
+        requestLandscape();
+      } else {
+        exitLandscape();
+      }
+      return next;
+    });
+  };
   const updateTheme = (t: string) => setTheme(t);
   const toggleTerminal = (open?: boolean) => {
     // If in pure GUI mode and user opens terminal, automatically switch to terminal mode

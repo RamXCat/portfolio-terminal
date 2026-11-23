@@ -10,8 +10,10 @@ import {
   ShieldAlert, 
   ArrowUp,
   Volume2,
-  VolumeX
+  VolumeX,
+  Smartphone
 } from 'lucide-react';
+import { requestLandscape, exitLandscape } from '../utils/orientation';
 
 // ==========================================
 // PURE WEB AUDIO API SYNTHESIZER (No Audio Assets Needed)
@@ -1586,6 +1588,7 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
       window.removeEventListener('touchstart', handleTouchAim);
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
+      exitLandscape();
       restoreElements();
     };
   }, [isActive, currentWeapon]);
@@ -1727,8 +1730,40 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
       {/* ============================================================== */}
       <div className="mobile-gamepad fixed inset-0 pointer-events-none z-[100000] select-none block md:hidden">
         
-        {/* Floating Mobile Jetpack Fuel Indicator (Top Left under HUD) */}
-        <div className="fixed top-20 left-4 px-3 py-1.5 bg-[#090B0E]/85 backdrop-blur-md rounded-full border border-primary/30 flex items-center gap-2 font-mono text-[9px] text-white">
+        {/* Mobile Portrait Rotation Prompt (Shown on phones in portrait mode) */}
+        <div className="fixed inset-0 z-[100002] bg-[#090B0E]/95 backdrop-blur-xl flex flex-col items-center justify-center p-6 text-center select-none portrait:flex landscape:hidden pointer-events-auto">
+          <div className="w-16 h-16 rounded-2xl bg-primary/20 border border-primary/50 flex items-center justify-center mb-4 text-primary animate-pulse shadow-[0_0_25px_rgba(199,120,221,0.4)]">
+            <Smartphone className="w-8 h-8 rotate-90" />
+          </div>
+          <h3 className="text-white font-mono font-bold text-base tracking-widest uppercase mb-1">
+            Rotate to Landscape
+          </h3>
+          <p className="text-tertiary font-mono text-xs max-w-xs leading-relaxed mb-4">
+            DOMolition requires landscape mode for the dual-thumb arcade gamepad. Rotate your phone sideways to play!
+          </p>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => requestLandscape()}
+              className="px-5 py-2.5 bg-primary text-black font-mono font-bold text-xs uppercase tracking-wider rounded-xl shadow-[0_0_20px_rgba(199,120,221,0.5)] cursor-pointer"
+            >
+              Lock Landscape
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                exitLandscape();
+                onClose();
+              }}
+              className="px-4 py-2.5 bg-white/10 text-white font-mono text-xs rounded-xl hover:bg-white/20 transition-all cursor-pointer"
+            >
+              Exit
+            </button>
+          </div>
+        </div>
+
+        {/* Floating Mobile Jetpack Fuel Indicator (Top Left under HUD in landscape) */}
+        <div className="fixed top-14 sm:top-20 left-4 px-3 py-1.5 bg-[#090B0E]/85 backdrop-blur-md rounded-full border border-primary/30 flex items-center gap-2 font-mono text-[9px] text-white">
           <span className="text-primary font-bold">FUEL</span>
           <div className="w-16 h-1.5 bg-white/20 rounded-full overflow-hidden">
             <div 
