@@ -1896,10 +1896,10 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
         </div>
 
         {/* 2. GAMEPAD ACTION BUTTONS & AIM-AND-FIRE JOYSTICK (Bottom-Right Glassmorphic Cluster) */}
-        <div className="fixed bottom-5 right-5 w-52 h-52 pointer-events-auto touch-none">
+        <div className="fixed bottom-5 right-5 w-64 h-52 pointer-events-auto touch-none">
           <div className="relative w-full h-full">
             
-            {/* Top-Right: ENLARGED JUMP & JETPACK THRUSTERS BUTTON (Placed on top-right where GUN was) */}
+            {/* Top-Right: ENLARGED JUMP & JETPACK THRUSTERS BUTTON */}
             <button
               type="button"
               onTouchStart={handleJumpStart}
@@ -1912,15 +1912,26 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
               <span className="text-[7px] font-bold opacity-90 text-emerald-200 mt-0.5">JETPACK</span>
             </button>
 
-            {/* Top-Left: RESET DOM Button (Glass Cyan/Teal) */}
+            {/* Bottom-Center/Left: GUN / CYCLE WEAPON Button */}
+            <button
+              type="button"
+              onTouchStart={(e) => { e.preventDefault(); cycleWeapon(); }}
+              onClick={cycleWeapon}
+              className="absolute bottom-2 right-28 w-13 h-13 rounded-full bg-amber-400/20 backdrop-blur-xl active:bg-amber-400/50 text-amber-300 font-mono font-bold text-sm border-2 border-amber-400/45 shadow-[0_4px_20px_rgba(245,158,11,0.25),inset_0_1px_1px_rgba(255,255,255,0.3)] flex flex-col items-center justify-center leading-none active:scale-95 transition-all z-10"
+            >
+              <span className="text-sm font-extrabold">GUN</span>
+              <span className="text-[7px] font-bold opacity-90 text-amber-200 mt-0.5">CYCLE [Y]</span>
+            </button>
+
+            {/* Far Bottom-Left: RESET DOM Button (Placed to the left side of GUN) */}
             <button
               type="button"
               onTouchStart={(e) => { e.preventDefault(); restoreElements(); }}
               onClick={restoreElements}
-              className="absolute top-2 left-2 w-12 h-12 rounded-full bg-cyan-400/20 backdrop-blur-xl active:bg-cyan-400/50 text-cyan-300 font-mono font-bold text-sm border border-cyan-400/40 shadow-[0_4px_20px_rgba(6,182,212,0.25),inset_0_1px_1px_rgba(255,255,255,0.3)] flex flex-col items-center justify-center leading-none active:scale-95 transition-all z-10"
+              className="absolute bottom-2 left-2 w-13 h-13 rounded-full bg-cyan-400/20 backdrop-blur-xl active:bg-cyan-400/50 text-cyan-300 font-mono font-bold text-sm border-2 border-cyan-400/45 shadow-[0_4px_20px_rgba(6,182,212,0.25),inset_0_1px_1px_rgba(255,255,255,0.3)] flex flex-col items-center justify-center leading-none active:scale-95 transition-all z-10"
             >
-              <span>X</span>
-              <span className="text-[7px] font-bold opacity-90 text-cyan-200">RESET</span>
+              <span className="text-sm font-extrabold">RESET</span>
+              <span className="text-[7px] font-bold opacity-90 text-cyan-200 mt-0.5">REPAIR [X]</span>
             </button>
 
             {/* Center-Right: ENLARGED FIRE & AIM JOYSTICK BUTTON (360° Drag to Aim & Fire, or Tap to Fire) */}
@@ -1952,17 +1963,6 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
                 <span className="text-[7px] font-mono opacity-80 mt-0.5">AIM 🕹️</span>
               </div>
             </div>
-
-            {/* Bottom-Left: GUN / CYCLE WEAPON Button (Glass Gold/Amber, placed where JUMP was) */}
-            <button
-              type="button"
-              onTouchStart={(e) => { e.preventDefault(); cycleWeapon(); }}
-              onClick={cycleWeapon}
-              className="absolute bottom-2 left-3 w-13 h-13 rounded-full bg-amber-400/20 backdrop-blur-xl active:bg-amber-400/50 text-amber-300 font-mono font-bold text-sm border-2 border-amber-400/45 shadow-[0_4px_20px_rgba(245,158,11,0.25),inset_0_1px_1px_rgba(255,255,255,0.3)] flex flex-col items-center justify-center leading-none active:scale-95 transition-all z-10"
-            >
-              <span className="text-sm font-extrabold">GUN</span>
-              <span className="text-[7px] font-bold opacity-90 text-amber-200 mt-0.5">CYCLE [Y]</span>
-            </button>
 
           </div>
         </div>
