@@ -132,7 +132,7 @@ export default function App() {
         )}
         <Suspense fallback={null}>
           <Routes>
-            <Route path="/" element={<Dashboard onMatrixToggle={toggleMatrix} onPartyToggle={toggleParty} onThemeChange={updateTheme} isTerminalOpen={isTerminalOpen} setIsTerminalOpen={toggleTerminal} />} />
+            <Route path="/" element={<Dashboard onMatrixToggle={toggleMatrix} onPartyToggle={toggleParty} onThemeChange={updateTheme} isTerminalOpen={isTerminalOpen} setIsTerminalOpen={toggleTerminal} onModeChange={handleModeChange} />} />
             <Route path="/projects" element={<Projects onMatrixToggle={toggleMatrix} onPartyToggle={toggleParty} onThemeChange={updateTheme} isTerminalOpen={isTerminalOpen} setIsTerminalOpen={toggleTerminal} />} />
             <Route path="/skills" element={<Skills onMatrixToggle={toggleMatrix} onPartyToggle={toggleParty} onThemeChange={updateTheme} isTerminalOpen={isTerminalOpen} setIsTerminalOpen={toggleTerminal} />} />
             <Route path="/about" element={<About onMatrixToggle={toggleMatrix} onPartyToggle={toggleParty} onThemeChange={updateTheme} isTerminalOpen={isTerminalOpen} setIsTerminalOpen={toggleTerminal} />} />

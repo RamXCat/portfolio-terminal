@@ -65,20 +65,16 @@ const SKILLS = [
   { title: "Frameworks", items: ["SpringBoot", "React"] }
 ];
 
-export default function Dashboard({ onMatrixToggle, onPartyToggle, onThemeChange, isTerminalOpen, setIsTerminalOpen }: {
+export default function Dashboard({ onMatrixToggle, onPartyToggle, onThemeChange, isTerminalOpen, setIsTerminalOpen, onModeChange }: {
   onMatrixToggle: () => void,
   onPartyToggle: () => void,
   onThemeChange: (theme: string) => void,
   isTerminalOpen: boolean,
-  setIsTerminalOpen: (open?: boolean) => void
+  setIsTerminalOpen: (open?: boolean) => void,
+  onModeChange?: (mode: any) => void
 }) {
   const [loading, setLoading] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 2500);
-    return () => clearTimeout(timer);
-  }, []);
 
   const revealVariants = {
     hidden: { opacity: 0, y: 30 },
@@ -102,7 +98,12 @@ export default function Dashboard({ onMatrixToggle, onPartyToggle, onThemeChange
   return (
     <div className="min-h-screen bg-surface selection:bg-primary selection:text-on-primary overflow-x-hidden">
       <AnimatePresence>
-        {loading && <Loader />}
+        {loading && (
+          <Loader 
+            onComplete={() => setLoading(false)} 
+            onSelectMode={onModeChange} 
+          />
+        )}
       </AnimatePresence>
 
       {/* Navigation */}
