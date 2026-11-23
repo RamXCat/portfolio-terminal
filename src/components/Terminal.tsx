@@ -205,7 +205,11 @@ export default function Terminal({
 
   const handleCommand = (e: FormEvent) => {
     e.preventDefault();
-    const rawInputArr = input.trim().split(/\s+/);
+    executeCommand(input);
+  };
+
+  const executeCommand = (cmdText: string) => {
+    const rawInputArr = cmdText.trim().split(/\s+/);
     const rawCmd = rawInputArr[0];
     const args = rawInputArr.slice(1);
     if (!rawCmd) return;
@@ -217,8 +221,8 @@ export default function Terminal({
     // List of commands that MUST have a leading slash
     const slashRequired = ['about', 'projects', 'skills', 'network', 'whoami', 'socials', 'coffee', 'themes', 'matrix', 'konami', 'game', 'destroy', 'chaos', 'notifications', 'work', 'uname'];
 
-    setHistory(prev => [...prev, { type: 'cmd', text: input.trim() }]);
-    setCmdHistory(prev => [input.trim(), ...prev.filter(c => c !== input.trim())]);
+    setHistory(prev => [...prev, { type: 'cmd', text: cmdText.trim() }]);
+    setCmdHistory(prev => [cmdText.trim(), ...prev.filter(c => c !== cmdText.trim())]);
     setHistoryIndex(-1);
 
     if (isHash && ['retro', 'bw', 'urbane', 'cyberpunk', 'matrix', 'synthwave', 'tokyo', 'amber', 'bauhaus', 'default'].includes(cleanCmd)) {
@@ -841,6 +845,29 @@ export default function Terminal({
                   item.text
                 )}
               </div>
+            ))}
+          </div>
+
+          {/* Quick Action Chips for non-technical visitors */}
+          <div className="px-3 py-1.5 bg-surface-container border-t border-outline-variant/20 flex items-center gap-1.5 overflow-x-auto select-none scrollbar-none shrink-0">
+            <span className="text-[9px] font-mono text-tertiary opacity-50 shrink-0 uppercase tracking-wider">Quick:</span>
+            {[
+              { label: 'Projects', cmd: '/projects' },
+              { label: 'Skills', cmd: '/skills' },
+              { label: 'About', cmd: '/about' },
+              { label: 'Game 🎮', cmd: '/game' },
+              { label: 'WhoAmI', cmd: '/whoami' },
+              { label: 'Themes 🎨', cmd: '/themes' },
+              { label: 'Clear', cmd: 'clear' }
+            ].map(chip => (
+              <button
+                key={chip.label}
+                type="button"
+                onClick={() => executeCommand(chip.cmd)}
+                className="px-2 py-0.5 rounded text-[10px] font-mono bg-surface-container-high border border-outline-variant/30 text-tertiary hover:border-primary hover:text-primary transition-all whitespace-nowrap cursor-pointer active:scale-95"
+              >
+                {chip.label}
+              </button>
             ))}
           </div>
 

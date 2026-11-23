@@ -6,6 +6,7 @@ import ScrollToTop from "./components/ScrollToTop";
 import Notification from "./components/Notification";
 import CursorBubble from "./components/CursorBubble";
 import ScrollProgressBar from "./components/ScrollProgressBar";
+import ModeSwitcher, { PortfolioMode } from "./components/ModeSwitcher";
 
 // Lazy-load secondary pages, visual overlays and game for optimal bundle performance
 const Projects = lazy(() => import("./pages/Projects"));
@@ -18,6 +19,9 @@ const MatrixRain = lazy(() => import("./components/MatrixRain"));
 const PartyMode = lazy(() => import("./components/PartyMode"));
 
 export default function App() {
+  const [viewMode, setViewMode] = useState<PortfolioMode>(() => {
+    return (localStorage.getItem('portfolio_view_mode') as PortfolioMode) || 'terminal';
+  });
   const [isMatrixActive, setIsMatrixActive] = useState(false);
   const [isPartyModeActive, setIsPartyModeActive] = useState(false);
   const [isGameActive, setIsGameActive] = useState(false);
@@ -30,8 +34,22 @@ export default function App() {
   const toggleParty = () => setIsPartyModeActive(v => !v);
   const toggleGame = () => setIsGameActive(v => !v);
   const updateTheme = (t: string) => setTheme(t);
-  const toggleTerminal = (open?: boolean) => setIsTerminalOpen(v => open ?? !v);
+  const toggleTerminal = (open?: boolean) => {
+    // If in pure GUI mode and user opens terminal, automatically switch to terminal mode
+    if (viewMode === 'gui' && (open ?? !isTerminalOpen)) {
+      setViewMode('terminal');
+      localStorage.setItem('portfolio_view_mode', 'terminal');
+    }
+    setIsTerminalOpen(v => open ?? !v);
+  };
   const toggleNotifications = (enabled: boolean) => setIsNotificationsEnabled(enabled);
+
+  const handleModeChange = (mode: PortfolioMode) => {
+    setViewMode(mode);
+    if (mode === 'gui') {
+      setIsTerminalOpen(false);
+    }
+  };
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -80,26 +98,38 @@ export default function App() {
       <ScrollToTop />
       <ScrollProgressBar />
       {!isGameActive && <CursorBubble currentTheme={theme} />}
+      <ModeSwitcher 
+        currentMode={viewMode} 
+        onModeChange={handleModeChange} 
+        onOpenTerminal={() => toggleTerminal(true)}
+        onGameToggle={toggleGame}
+        onThemeChange={updateTheme}
+        currentTheme={theme}
+      />
       <Suspense fallback={null}>
         {isGameActive && <ShooterGame isActive={isGameActive} onClose={() => setIsGameActive(false)} />}
       </Suspense>
-      <Notification isTerminalOpen={isTerminalOpen} isEnabled={isNotificationsEnabled} />
+      {viewMode === 'terminal' && (
+        <Notification isTerminalOpen={isTerminalOpen} isEnabled={isNotificationsEnabled} />
+      )}
       <div className={isPartyModeActive ? 'party-active' : ''}>
         <Suspense fallback={null}>
           {isMatrixActive && <MatrixRain />}
           {isPartyModeActive && <PartyMode />}
         </Suspense>
-        <Terminal 
-          isOpen={isTerminalOpen} 
-          onClose={() => toggleTerminal(false)} 
-          onMatrixToggle={toggleMatrix}
-          onPartyToggle={toggleParty}
-          onGameToggle={toggleGame}
-          onThemeChange={updateTheme}
-          onNotificationsToggle={toggleNotifications}
-          isNotificationsEnabled={isNotificationsEnabled}
-          focusCounter={terminalFocusCounter}
-        />
+        {viewMode === 'terminal' && (
+          <Terminal 
+            isOpen={isTerminalOpen} 
+            onClose={() => toggleTerminal(false)} 
+            onMatrixToggle={toggleMatrix}
+            onPartyToggle={toggleParty}
+            onGameToggle={toggleGame}
+            onThemeChange={updateTheme}
+            onNotificationsToggle={toggleNotifications}
+            isNotificationsEnabled={isNotificationsEnabled}
+            focusCounter={terminalFocusCounter}
+          />
+        )}
         <Suspense fallback={null}>
           <Routes>
             <Route path="/" element={<Dashboard onMatrixToggle={toggleMatrix} onPartyToggle={toggleParty} onThemeChange={updateTheme} isTerminalOpen={isTerminalOpen} setIsTerminalOpen={toggleTerminal} />} />
