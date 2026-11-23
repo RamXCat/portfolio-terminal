@@ -526,6 +526,7 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
   const [totalDOMCount, setTotalDOMCount] = useState(100);
   const [isMuted, setIsMuted] = useState(false);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const [joystickOnRight, setJoystickOnRight] = useState(true); // Default to right side per user request
 
   useEffect(() => {
     setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
@@ -1773,13 +1774,26 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
           </div>
         </div>
 
-        {/* 1. VIRTUAL JOYSTICK (Bottom-Left) */}
+        {/* Mobile Layout Position Toggle (Allows switching joystick between right & left) */}
+        <button
+          type="button"
+          onClick={() => setJoystickOnRight(v => !v)}
+          className="fixed top-14 sm:top-20 right-4 px-2.5 py-1.5 bg-[#090B0E]/85 backdrop-blur-md rounded-full border border-primary/30 flex items-center gap-1.5 font-mono text-[9px] text-white pointer-events-auto cursor-pointer shadow-lg active:scale-95 transition-all"
+          title="Toggle Joystick Position (Right / Left)"
+        >
+          <span className="text-primary font-bold">JOYSTICK:</span>
+          <span className="text-[#00F0FF] font-bold">{joystickOnRight ? "RIGHT" : "LEFT"}</span>
+        </button>
+
+        {/* 1. VIRTUAL JOYSTICK (Positioned on the Right Side by default, or Left if toggled) */}
         <div 
           onTouchStart={handleJoystickTouchStart}
           onTouchMove={handleJoystickTouchMove}
           onTouchEnd={handleJoystickTouchEnd}
           onTouchCancel={handleJoystickTouchEnd}
-          className="fixed bottom-6 left-5 w-32 h-32 rounded-full bg-black/40 backdrop-blur-md border-2 border-primary/40 shadow-[0_0_25px_rgba(199,120,221,0.25)] flex items-center justify-center pointer-events-auto touch-none"
+          className={`fixed bottom-6 ${
+            joystickOnRight ? "right-44 sm:right-48" : "left-5"
+          } w-32 h-32 rounded-full bg-black/40 backdrop-blur-md border-2 border-primary/40 shadow-[0_0_25px_rgba(199,120,221,0.25)] flex items-center justify-center pointer-events-auto touch-none transition-all duration-300`}
         >
           {/* Directional Guides */}
           <div className="absolute top-2 text-[9px] font-mono text-tertiary/70 font-bold">▲</div>
@@ -1802,7 +1816,7 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
           </div>
         </div>
 
-        {/* 2. GAMEPAD ACTION BUTTONS: X, A, B, Y (Bottom-Right) */}
+        {/* 2. GAMEPAD ACTION BUTTONS: FIRE, JUMP, RESET, GUN (Right-Side Diamond Cluster) */}
         <div className="fixed bottom-6 right-5 w-36 h-36 relative pointer-events-auto touch-none">
           {/* Top: Y Button (Switch Weapon) */}
           <button
@@ -1812,7 +1826,7 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
             className="absolute top-0 left-1/2 -translate-x-1/2 w-11 h-11 rounded-full bg-[#E5B537]/25 active:bg-[#E5B537] text-[#E5B537] active:text-black font-mono font-bold text-sm border-2 border-[#E5B537] shadow-[0_0_15px_rgba(229,181,55,0.4)] flex flex-col items-center justify-center leading-none"
           >
             <span>Y</span>
-            <span className="text-[7px] opacity-80">GUN</span>
+            <span className="text-[7px] opacity-90 font-bold">GUN</span>
           </button>
 
           {/* Left: X Button (Rebuild / Reset DOM) */}
@@ -1823,7 +1837,7 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
             className="absolute top-1/2 -translate-y-1/2 left-0 w-11 h-11 rounded-full bg-[#00F0FF]/25 active:bg-[#00F0FF] text-[#00F0FF] active:text-black font-mono font-bold text-sm border-2 border-[#00F0FF] shadow-[0_0_15px_rgba(0,240,255,0.4)] flex flex-col items-center justify-center leading-none"
           >
             <span>X</span>
-            <span className="text-[7px] opacity-80">RESET</span>
+            <span className="text-[7px] opacity-90 font-bold">RESET</span>
           </button>
 
           {/* Right: B Button (Fire / Shoot Primary Weapon) */}
@@ -1836,7 +1850,7 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
             className="absolute top-1/2 -translate-y-1/2 right-0 w-12 h-12 rounded-full bg-[#FF2A85]/35 active:bg-[#FF2A85] text-[#FF2A85] active:text-white font-mono font-bold text-sm border-2 border-[#FF2A85] shadow-[0_0_20px_rgba(255,42,133,0.5)] flex flex-col items-center justify-center leading-none"
           >
             <span>B</span>
-            <span className="text-[7px] opacity-90">FIRE</span>
+            <span className="text-[7px] opacity-90 font-bold">FIRE</span>
           </button>
 
           {/* Bottom: A Button (Jump / Jetpack Thrusters) */}
@@ -1849,7 +1863,7 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
             className="absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-12 rounded-full bg-[#00FF66]/35 active:bg-[#00FF66] text-[#00FF66] active:text-black font-mono font-bold text-sm border-2 border-[#00FF66] shadow-[0_0_20px_rgba(0,255,102,0.5)] flex flex-col items-center justify-center leading-none"
           >
             <span>A</span>
-            <span className="text-[7px] opacity-90">JUMP</span>
+            <span className="text-[7px] opacity-90 font-bold">JUMP</span>
           </button>
         </div>
 
