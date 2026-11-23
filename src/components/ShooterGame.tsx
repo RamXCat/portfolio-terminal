@@ -538,6 +538,7 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
     currX: 0,
     currY: 0
   });
+  const [joystickVisual, setJoystickVisual] = useState<{ active: boolean; dx: number; dy: number }>({ active: false, dx: 0, dy: 0 });
   // Weapon cycle helper for Gamepad Y button
   const cycleWeapon = () => {
     const list: WeaponType[] = ['RIFLE', 'SHOTGUN', 'ROCKET', 'LASER', 'NUKE'];
@@ -1581,6 +1582,8 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mousedown', handleMouseDown);
       window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('touchmove', handleTouchAim);
+      window.removeEventListener('touchstart', handleTouchAim);
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
       restoreElements();
@@ -1596,13 +1599,13 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
       {/* Interactive Physics Canvas */}
       <canvas ref={canvasRef} className="w-full h-full pointer-events-auto cursor-crosshair" />
 
-      {/* DOMolition Tactical Weapon Selector & HUD Header */}
-      <div className="game-hud-control fixed top-4 left-1/2 -translate-x-1/2 flex items-center gap-4 px-6 py-2.5 bg-[#090b0e]/95 backdrop-blur-2xl border border-primary/40 shadow-[0_0_40px_rgba(199,120,221,0.35)] rounded-2xl text-white pointer-events-auto">
+      {/* DOMolition Tactical Weapon Selector & HUD Header (Fully responsive on mobile & desktop) */}
+      <div className="game-hud-control fixed top-2 sm:top-4 left-1/2 -translate-x-1/2 flex items-center gap-2 sm:gap-4 px-3 sm:px-6 py-1.5 sm:py-2.5 bg-[#090b0e]/95 backdrop-blur-2xl border border-primary/40 shadow-[0_0_40px_rgba(199,120,221,0.35)] rounded-2xl text-white pointer-events-auto max-w-[calc(100vw-1rem)] overflow-x-auto">
         
         {/* DOMolition Title & Destruction Progress Meter */}
-        <div className="flex flex-col gap-1 min-w-[130px]">
-          <div className="flex items-center gap-2 font-mono text-[11px] font-bold tracking-widest text-primary">
-            <ShieldAlert className="w-4 h-4 text-primary animate-pulse" />
+        <div className="flex flex-col gap-0.5 sm:gap-1 min-w-[90px] sm:min-w-[130px] shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-2 font-mono text-[10px] sm:text-[11px] font-bold tracking-widest text-primary">
+            <ShieldAlert className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary animate-pulse" />
             <span>DOMOLITION</span>
           </div>
           <div className="flex items-center gap-2">
@@ -1612,14 +1615,14 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
                 style={{ width: `${destroyedPercent}%` }}
               />
             </div>
-            <span className="font-mono text-[10px] text-tertiary">{destroyedPercent}%</span>
+            <span className="font-mono text-[9px] sm:text-[10px] text-tertiary">{destroyedPercent}%</span>
           </div>
         </div>
 
-        <div className="h-8 w-px bg-white/15"></div>
+        <div className="h-6 sm:h-8 w-px bg-white/15 shrink-0"></div>
 
         {/* Weapons Arsenal Selector (1-5) */}
-        <div className="flex items-center gap-1.5">
+        <div className="hidden sm:flex items-center gap-1.5 shrink-0">
           {(Object.keys(WEAPONS) as WeaponType[]).map((wpKey) => {
             const wp = WEAPONS[wpKey];
             const isSelected = currentWeapon === wpKey;
@@ -1642,24 +1645,30 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
           })}
         </div>
 
-        <div className="h-8 w-px bg-white/15"></div>
+        {/* Current Active Weapon indicator on mobile */}
+        <div className="flex sm:hidden items-center gap-1.5 px-2 py-1 bg-primary/20 border border-primary/40 rounded-lg font-mono text-[11px] shrink-0">
+          <span>{WEAPONS[currentWeapon].icon}</span>
+          <span className="font-bold text-white text-[10px]">{WEAPONS[currentWeapon].name.split(' ')[0]}</span>
+        </div>
+
+        <div className="h-6 sm:h-8 w-px bg-white/15 shrink-0"></div>
 
         {/* Score & Telemetry */}
-        <div className="flex items-center gap-3 font-mono text-xs">
+        <div className="flex items-center gap-2 sm:gap-3 font-mono text-xs shrink-0">
           <div>
-            <span className="text-tertiary opacity-60 text-[10px] block">WRECKED</span>
-            <span className="text-[#FF2A85] font-bold text-sm leading-none">{destroyedCount}</span>
+            <span className="text-tertiary opacity-60 text-[8px] sm:text-[10px] block leading-none">WRECKED</span>
+            <span className="text-[#FF2A85] font-bold text-xs sm:text-sm leading-none">{destroyedCount}</span>
           </div>
           <div>
-            <span className="text-tertiary opacity-60 text-[10px] block">SCORE</span>
-            <span className="text-[#00F0FF] font-bold text-sm leading-none">{score}</span>
+            <span className="text-tertiary opacity-60 text-[8px] sm:text-[10px] block leading-none">SCORE</span>
+            <span className="text-[#00F0FF] font-bold text-xs sm:text-sm leading-none">{score}</span>
           </div>
         </div>
 
-        <div className="h-8 w-px bg-white/15"></div>
+        <div className="h-6 sm:h-8 w-px bg-white/15 shrink-0"></div>
 
         {/* Reset & Exit Actions */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           {/* Sound Mute/Unmute Toggle Button */}
           <button
             onClick={toggleMute}
@@ -1670,16 +1679,16 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
                 : 'bg-surface-container-high border-outline-variant/30 text-primary hover:border-primary hover:bg-primary/20'
             }`}
           >
-            {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+            {isMuted ? <VolumeX className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <Volume2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
           </button>
 
           <button
             onClick={restoreElements}
             title="Restore Website Elements (R)"
-            className="flex items-center gap-1 px-3 py-1.5 bg-surface-container-high border border-outline-variant/30 hover:border-primary text-xs font-mono rounded-lg hover:bg-primary/20 transition-all text-on-surface cursor-pointer"
+            className="flex items-center gap-1 px-2 sm:px-3 py-1.5 bg-surface-container-high border border-outline-variant/30 hover:border-primary text-xs font-mono rounded-lg hover:bg-primary/20 transition-all text-on-surface cursor-pointer"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Reset</span> <span className="opacity-60">[R]</span>
+            <span className="hidden sm:inline">Reset</span> <span className="opacity-60 hidden sm:inline">[R]</span>
           </button>
 
           <button
@@ -1687,7 +1696,7 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
             title="Exit Game (ESC)"
             className="p-1.5 bg-red-500/20 border border-red-500/40 text-red-400 hover:bg-red-500 hover:text-white rounded-lg transition-all cursor-pointer"
           >
-            <X className="w-4 h-4" />
+            <X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </button>
         </div>
       </div>
