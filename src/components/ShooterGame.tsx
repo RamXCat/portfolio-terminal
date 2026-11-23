@@ -539,7 +539,7 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
     return () => window.removeEventListener('resize', checkTouch);
   }, []);
 
-  // Virtual Joystick touch state
+  // Virtual Joystick touch state (Movement - Left)
   const joystickRef = useRef<{ active: boolean; touchId: number | null; startX: number; startY: number; currX: number; currY: number }>({
     active: false,
     touchId: null,
@@ -549,6 +549,17 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
     currY: 0
   });
   const [joystickVisual, setJoystickVisual] = useState<{ active: boolean; dx: number; dy: number }>({ active: false, dx: 0, dy: 0 });
+
+  // Virtual Fire Joystick touch state (Aim + Shoot - Right)
+  const fireJoystickRef = useRef<{ active: boolean; touchId: number | null; startX: number; startY: number; currX: number; currY: number }>({
+    active: false,
+    touchId: null,
+    startX: 0,
+    startY: 0,
+    currX: 0,
+    currY: 0
+  });
+  const [fireJoystickVisual, setFireJoystickVisual] = useState<{ active: boolean; dx: number; dy: number }>({ active: false, dx: 0, dy: 0 });
   // Weapon cycle helper for Gamepad Y button
   const cycleWeapon = () => {
     const list: WeaponType[] = ['RIFLE', 'SHOTGUN', 'ROCKET', 'LASER', 'NUKE'];
@@ -606,6 +617,75 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
         joystickRef.current.active = false;
         joystickRef.current.touchId = null;
         setJoystickVisual({ active: false, dx: 0, dy: 0 });
+        break;
+      }
+    }
+  };
+
+  // Gamepad Fire Joystick handlers (Drag to Aim 360° while auto-firing, or tap to fire straight)
+  const handleFireJoystickTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    const touch = e.changedTouches[0];
+    const rect = e.currentTarget.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    fireJoystickRef.current = {
+      active: true,
+      touchId: touch.identifier,
+      startX: centerX,
+      startY: centerY,
+      currX: touch.clientX,
+      currY: touch.clientY
+    };
+    mousePos.current.isDown = true;
+    const dx = Math.max(-28, Math.min(28, touch.clientX - centerX));
+    const dy = Math.max(-28, Math.min(28, touch.clientY - centerY));
+    setFireJoystickVisual({ active: true, dx, dy });
+
+    // Aim if dragged slightly
+    if (Math.hypot(dx, dy) > 6) {
+      const aimAngle = Math.atan2(dy, dx);
+      playerRef.current.angle = aimAngle;
+      playerRef.current.facing = dx >= 0 ? 1 : -1;
+    }
+  };
+
+  const handleFireJoystickTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    if (!fireJoystickRef.current.active) return;
+    for (let i = 0; i < e.changedTouches.length; i++) {
+      const touch = e.changedTouches[i];
+      if (touch.identifier === fireJoystickRef.current.touchId) {
+        fireJoystickRef.current.currX = touch.clientX;
+        fireJoystickRef.current.currY = touch.clientY;
+        const rawDx = touch.clientX - fireJoystickRef.current.startX;
+        const rawDy = touch.clientY - fireJoystickRef.current.startY;
+        const dist = Math.hypot(rawDx, rawDy);
+        const maxDist = 32;
+        const angle = Math.atan2(rawDy, rawDx);
+        const clampedDist = Math.min(dist, maxDist);
+        const dx = Math.cos(angle) * clampedDist;
+        const dy = Math.sin(angle) * clampedDist;
+        setFireJoystickVisual({ active: true, dx, dy });
+
+        // Update player aim angle and facing in real-time
+        if (dist > 8) {
+          playerRef.current.angle = angle;
+          playerRef.current.facing = dx >= 0 ? 1 : -1;
+        }
+        break;
+      }
+    }
+  };
+
+  const handleFireJoystickTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    for (let i = 0; i < e.changedTouches.length; i++) {
+      if (e.changedTouches[i].identifier === fireJoystickRef.current.touchId) {
+        fireJoystickRef.current.active = false;
+        fireJoystickRef.current.touchId = null;
+        mousePos.current.isDown = false;
+        setFireJoystickVisual({ active: false, dx: 0, dy: 0 });
         break;
       }
     }
@@ -1786,85 +1866,104 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
           </div>
         </div>
 
-        {/* 1. VIRTUAL JOYSTICK (Bottom-Left) */}
+        {/* 1. VIRTUAL JOYSTICK - MOVEMENT (Bottom-Left Glassmorphic Circle) */}
         <div 
           onTouchStart={handleJoystickTouchStart}
           onTouchMove={handleJoystickTouchMove}
           onTouchEnd={handleJoystickTouchEnd}
           onTouchCancel={handleJoystickTouchEnd}
-          className="fixed bottom-6 left-6 w-32 h-32 rounded-full bg-black/40 backdrop-blur-md border-2 border-primary/40 shadow-[0_0_25px_rgba(199,120,221,0.25)] flex items-center justify-center pointer-events-auto touch-none"
+          className="fixed bottom-6 left-6 w-32 h-32 rounded-full bg-black/30 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.2)] flex items-center justify-center pointer-events-auto touch-none"
         >
           {/* Directional Guides */}
-          <div className="absolute top-2 text-[9px] font-mono text-tertiary/70 font-bold">▲</div>
-          <div className="absolute bottom-2 text-[9px] font-mono text-tertiary/70 font-bold">▼</div>
-          <div className="absolute left-2 text-[9px] font-mono text-tertiary/70 font-bold">◀</div>
-          <div className="absolute right-2 text-[9px] font-mono text-tertiary/70 font-bold">▶</div>
+          <div className="absolute top-2 text-[9px] font-mono text-white/50 font-bold">▲</div>
+          <div className="absolute bottom-2 text-[9px] font-mono text-white/50 font-bold">▼</div>
+          <div className="absolute left-2 text-[9px] font-mono text-white/50 font-bold">◀</div>
+          <div className="absolute right-2 text-[9px] font-mono text-white/50 font-bold">▶</div>
           
-          {/* Inner Joystick Thumb Knob */}
+          {/* Inner Joystick Thumb Knob with Frosted Glass & Neon Core */}
           <div 
             style={{ 
               transform: `translate(${joystickVisual.dx}px, ${joystickVisual.dy}px)` 
             }}
             className={`w-14 h-14 rounded-full transition-transform duration-75 flex items-center justify-center font-mono text-xs font-bold ${
               joystickVisual.active 
-                ? 'bg-primary text-black shadow-[0_0_20px_#C778DD] scale-105' 
-                : 'bg-white/20 text-white border border-white/30'
+                ? 'bg-primary/80 text-black backdrop-blur-md border border-white/40 shadow-[0_0_25px_#C778DD,inset_0_2px_4px_rgba(255,255,255,0.4)] scale-105' 
+                : 'bg-white/10 text-white backdrop-blur-md border border-white/25 shadow-[inset_0_1px_2px_rgba(255,255,255,0.3)]'
             }`}
           >
-            JOY
+            MOVE
           </div>
         </div>
 
-        {/* 2. GAMEPAD ACTION BUTTONS: FIRE, JUMP, RESET, GUN (Anchored firmly at Bottom-Right) */}
-        <div className="fixed bottom-6 right-6 w-36 h-36 pointer-events-auto touch-none">
+        {/* 2. GAMEPAD ACTION BUTTONS & AIM-AND-FIRE JOYSTICK (Bottom-Right Glassmorphic Cluster) */}
+        <div className="fixed bottom-5 right-5 w-48 h-48 pointer-events-auto touch-none">
           <div className="relative w-full h-full">
-            {/* Top: Y Button (Switch Weapon) */}
+            
+            {/* Top-Right: GUN / CYCLE WEAPON Button (Glass Gold/Amber) */}
             <button
               type="button"
               onTouchStart={(e) => { e.preventDefault(); cycleWeapon(); }}
               onClick={cycleWeapon}
-              className="absolute top-0 left-1/2 -translate-x-1/2 w-11 h-11 rounded-full bg-[#E5B537]/25 active:bg-[#E5B537] text-[#E5B537] active:text-black font-mono font-bold text-sm border-2 border-[#E5B537] shadow-[0_0_15px_rgba(229,181,55,0.4)] flex flex-col items-center justify-center leading-none"
+              className="absolute top-1 right-2 w-12 h-12 rounded-full bg-amber-400/20 backdrop-blur-xl active:bg-amber-400/50 text-amber-300 font-mono font-bold text-sm border border-amber-400/40 shadow-[0_4px_20px_rgba(245,158,11,0.25),inset_0_1px_1px_rgba(255,255,255,0.3)] flex flex-col items-center justify-center leading-none active:scale-95 transition-all"
             >
               <span>Y</span>
-              <span className="text-[7px] opacity-90 font-bold">GUN</span>
+              <span className="text-[7px] font-bold opacity-90 text-amber-200">GUN</span>
             </button>
 
-            {/* Left: X Button (Rebuild / Reset DOM) */}
+            {/* Top-Left: RESET DOM Button (Glass Cyan/Teal) */}
             <button
               type="button"
               onTouchStart={(e) => { e.preventDefault(); restoreElements(); }}
               onClick={restoreElements}
-              className="absolute top-1/2 -translate-y-1/2 left-0 w-11 h-11 rounded-full bg-[#00F0FF]/25 active:bg-[#00F0FF] text-[#00F0FF] active:text-black font-mono font-bold text-sm border-2 border-[#00F0FF] shadow-[0_0_15px_rgba(0,240,255,0.4)] flex flex-col items-center justify-center leading-none"
+              className="absolute top-1 left-2 w-12 h-12 rounded-full bg-cyan-400/20 backdrop-blur-xl active:bg-cyan-400/50 text-cyan-300 font-mono font-bold text-sm border border-cyan-400/40 shadow-[0_4px_20px_rgba(6,182,212,0.25),inset_0_1px_1px_rgba(255,255,255,0.3)] flex flex-col items-center justify-center leading-none active:scale-95 transition-all"
             >
               <span>X</span>
-              <span className="text-[7px] opacity-90 font-bold">RESET</span>
+              <span className="text-[7px] font-bold opacity-90 text-cyan-200">RESET</span>
             </button>
 
-            {/* Right: B Button (Fire / Shoot Primary Weapon) */}
-            <button
-              type="button"
-              onTouchStart={handleFireStart}
-              onTouchEnd={handleFireEnd}
-              onMouseDown={handleFireStart}
-              onMouseUp={handleFireEnd}
-              className="absolute top-1/2 -translate-y-1/2 right-0 w-12 h-12 rounded-full bg-[#FF2A85]/35 active:bg-[#FF2A85] text-[#FF2A85] active:text-white font-mono font-bold text-sm border-2 border-[#FF2A85] shadow-[0_0_20px_rgba(255,42,133,0.5)] flex flex-col items-center justify-center leading-none"
+            {/* Center-Right: ENLARGED FIRE & AIM JOYSTICK BUTTON (360° Drag to Aim & Fire, or Tap to Fire) */}
+            <div
+              onTouchStart={handleFireJoystickTouchStart}
+              onTouchMove={handleFireJoystickTouchMove}
+              onTouchEnd={handleFireJoystickTouchEnd}
+              onTouchCancel={handleFireJoystickTouchEnd}
+              className="absolute top-12 right-0 w-24 h-24 rounded-full bg-rose-500/20 backdrop-blur-2xl border-2 border-rose-400/50 shadow-[0_8px_30px_rgba(244,63,94,0.35),inset_0_1px_2px_rgba(255,255,255,0.4)] flex items-center justify-center pointer-events-auto touch-none"
             >
-              <span>B</span>
-              <span className="text-[7px] opacity-90 font-bold">FIRE</span>
-            </button>
+              {/* Subtle 360 Aim Crosshairs */}
+              <div className="absolute top-1.5 text-[7px] font-mono text-rose-300/40">▲</div>
+              <div className="absolute bottom-1.5 text-[7px] font-mono text-rose-300/40">▼</div>
+              <div className="absolute left-1.5 text-[7px] font-mono text-rose-300/40">◀</div>
+              <div className="absolute right-1.5 text-[7px] font-mono text-rose-300/40">▶</div>
 
-            {/* Bottom: A Button (Jump / Jetpack Thrusters) */}
+              {/* Fire Inner Joystick Knob */}
+              <div 
+                style={{ 
+                  transform: `translate(${fireJoystickVisual.dx}px, ${fireJoystickVisual.dy}px)` 
+                }}
+                className={`w-14 h-14 rounded-full transition-transform duration-75 flex flex-col items-center justify-center font-mono leading-none ${
+                  fireJoystickVisual.active 
+                    ? 'bg-rose-500 text-white shadow-[0_0_25px_#F43F5E,inset_0_2px_4px_rgba(255,255,255,0.4)] scale-110' 
+                    : 'bg-rose-500/35 text-rose-100 backdrop-blur-md border border-rose-300/40 shadow-[inset_0_1px_2px_rgba(255,255,255,0.3)]'
+                }`}
+              >
+                <span className="text-sm font-extrabold tracking-wider">FIRE</span>
+                <span className="text-[7px] font-mono opacity-80 mt-0.5">AIM 🕹️</span>
+              </div>
+            </div>
+
+            {/* Bottom-Left: ENLARGED JUMP & JETPACK THRUSTERS BUTTON (Glass Emerald/Green) */}
             <button
               type="button"
               onTouchStart={handleJumpStart}
               onTouchEnd={handleJumpEnd}
               onMouseDown={handleJumpStart}
               onMouseUp={handleJumpEnd}
-              className="absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-12 rounded-full bg-[#00FF66]/35 active:bg-[#00FF66] text-[#00FF66] active:text-black font-mono font-bold text-sm border-2 border-[#00FF66] shadow-[0_0_20px_rgba(0,255,102,0.5)] flex flex-col items-center justify-center leading-none"
+              className="absolute bottom-1 left-3 w-16 h-16 rounded-full bg-emerald-500/25 backdrop-blur-2xl active:bg-emerald-500/60 text-emerald-300 font-mono font-bold border-2 border-emerald-400/50 shadow-[0_8px_30px_rgba(16,185,129,0.35),inset_0_1px_2px_rgba(255,255,255,0.4)] flex flex-col items-center justify-center leading-none active:scale-95 transition-all"
             >
-              <span>A</span>
-              <span className="text-[7px] opacity-90 font-bold">JUMP</span>
+              <span className="text-base font-extrabold text-white">JUMP</span>
+              <span className="text-[8px] font-bold opacity-90 text-emerald-200 mt-0.5">JETPACK</span>
             </button>
+
           </div>
         </div>
 
