@@ -3,6 +3,7 @@ import { motion, useSpring, useMotionValue } from 'motion/react';
 
 interface CursorBubbleProps {
   currentTheme?: string;
+  isExpandingToGame?: boolean;
 }
 
 const THEME_DOT_COLORS: Record<string, string> = {
@@ -18,7 +19,7 @@ const THEME_DOT_COLORS: Record<string, string> = {
   bw: '#ffffff',
 };
 
-export default function CursorBubble({ currentTheme = "default" }: CursorBubbleProps) {
+export default function CursorBubble({ currentTheme = "default", isExpandingToGame = false }: CursorBubbleProps) {
   const dotColor = THEME_DOT_COLORS[currentTheme] || '#00FF66';
   const [isVisible, setIsVisible] = useState(false);
   const [isHoveringClickable, setIsHoveringClickable] = useState(false);
@@ -127,38 +128,44 @@ export default function CursorBubble({ currentTheme = "default" }: CursorBubbleP
 
   return (
     <>
-      {/* 1. Precision Difference-Blend Cursor Bubble */}
+      {/* 1. Precision Difference-Blend Cursor Bubble / Expanding Game Portal */}
       <motion.div
         aria-hidden="true"
-        className="pointer-events-none fixed top-0 left-0 z-[9990] rounded-full border border-white/60 transition-[width,height] duration-200 ease-out"
+        className={`pointer-events-none fixed top-0 left-0 rounded-full border border-white/60 ${
+          isExpandingToGame 
+            ? 'z-[99999] transition-[width,height,opacity] duration-700 ease-in-out' 
+            : 'z-[9990] transition-[width,height] duration-200 ease-out'
+        }`}
         style={{
-          width: bubbleSize,
-          height: bubbleSize,
-          x: smoothX,
-          y: smoothY,
+          width: isExpandingToGame ? '320vmax' : bubbleSize,
+          height: isExpandingToGame ? '320vmax' : bubbleSize,
+          x: isExpandingToGame ? mouseX : smoothX,
+          y: isExpandingToGame ? mouseY : smoothY,
           translateX: '-50%',
           translateY: '-50%',
-          mixBlendMode: 'difference',
-          backgroundColor: 'rgba(255, 255, 255, 0.95)',
-          boxShadow: '0 0 12px rgba(255, 255, 255, 0.4)',
+          mixBlendMode: isExpandingToGame ? 'normal' : 'difference',
+          backgroundColor: isExpandingToGame ? '#07090e' : 'rgba(255, 255, 255, 0.95)',
+          boxShadow: isExpandingToGame ? `0 0 100px ${dotColor}` : '0 0 12px rgba(255, 255, 255, 0.4)',
         }}
       />
 
       {/* 2. Precision Center Reticle Dot */}
-      <motion.div
-        aria-hidden="true"
-        className="pointer-events-none fixed top-0 left-0 z-[9995] rounded-full transition-colors duration-300"
-        style={{
-          width: 4,
-          height: 4,
-          x: mouseX,
-          y: mouseY,
-          translateX: '-50%',
-          translateY: '-50%',
-          backgroundColor: dotColor,
-          boxShadow: `0 0 6px ${dotColor}`,
-        }}
-      />
+      {!isExpandingToGame && (
+        <motion.div
+          aria-hidden="true"
+          className="pointer-events-none fixed top-0 left-0 z-[9995] rounded-full transition-colors duration-300"
+          style={{
+            width: 4,
+            height: 4,
+            x: mouseX,
+            y: mouseY,
+            translateX: '-50%',
+            translateY: '-50%',
+            backgroundColor: dotColor,
+            boxShadow: `0 0 6px ${dotColor}`,
+          }}
+        />
+      )}
     </>
   );
 }

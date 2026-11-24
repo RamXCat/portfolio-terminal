@@ -20,15 +20,13 @@ const MatrixRain = lazy(() => import("./components/MatrixRain"));
 const PartyMode = lazy(() => import("./components/PartyMode"));
 
 export default function App() {
-  const [hasEnteredPortfolio, setHasEnteredPortfolio] = useState(() => {
-    return false;
-  });
   const [viewMode, setViewMode] = useState<PortfolioMode>(() => {
     return (localStorage.getItem('portfolio_view_mode') as PortfolioMode) || 'terminal';
   });
   const [isMatrixActive, setIsMatrixActive] = useState(false);
   const [isPartyModeActive, setIsPartyModeActive] = useState(false);
   const [isGameActive, setIsGameActive] = useState(false);
+  const [isExpandingGame, setIsExpandingGame] = useState(false);
   const [theme, setTheme] = useState("default");
   const [isTerminalOpen, setIsTerminalOpen] = useState(false);
   const [isNotificationsEnabled, setIsNotificationsEnabled] = useState(true);
@@ -37,15 +35,22 @@ export default function App() {
   const toggleMatrix = () => setIsMatrixActive(v => !v);
   const toggleParty = () => setIsPartyModeActive(v => !v);
   const toggleGame = () => {
-    setIsGameActive(prev => {
-      const next = !prev;
-      if (next) {
+    if (isGameActive) {
+      exitLandscape();
+      setIsGameActive(false);
+      setIsExpandingGame(false);
+    } else {
+      // Trigger smooth circle expand from cursor bubble to full screen
+      setIsExpandingGame(true);
+      setTimeout(() => {
         requestLandscape();
-      } else {
-        exitLandscape();
-      }
-      return next;
-    });
+        setIsGameActive(true);
+        // Clean up expanding overlay once game has loaded
+        setTimeout(() => {
+          setIsExpandingGame(false);
+        }, 150);
+      }, 600);
+    }
   };
   const updateTheme = (t: string) => setTheme(t);
   const toggleTerminal = (open?: boolean) => {
@@ -119,7 +124,9 @@ export default function App() {
     <BrowserRouter>
       <ScrollToTop />
       <ScrollProgressBar />
-      {!isGameActive && <CursorBubble currentTheme={hasEnteredPortfolio ? theme : 'matrix'} />}
+      {(!isGameActive || isExpandingGame) && (
+        <CursorBubble currentTheme={theme} isExpandingToGame={isExpandingGame} />
+      )}
       {!isGameActive && (
         <ModeSwitcher 
           currentMode={viewMode} 
@@ -156,7 +163,7 @@ export default function App() {
         )}
         <Suspense fallback={null}>
           <Routes>
-            <Route path="/" element={<Dashboard onMatrixToggle={toggleMatrix} onPartyToggle={toggleParty} onThemeChange={updateTheme} isTerminalOpen={isTerminalOpen} setIsTerminalOpen={toggleTerminal} onModeChange={handleModeChange} onEnterPortfolio={() => setHasEnteredPortfolio(true)} />} />
+            <Route path="/" element={<Dashboard onMatrixToggle={toggleMatrix} onPartyToggle={toggleParty} onThemeChange={updateTheme} isTerminalOpen={isTerminalOpen} setIsTerminalOpen={toggleTerminal} onModeChange={handleModeChange} />} />
             <Route path="/projects" element={<Projects onMatrixToggle={toggleMatrix} onPartyToggle={toggleParty} onThemeChange={updateTheme} isTerminalOpen={isTerminalOpen} setIsTerminalOpen={toggleTerminal} />} />
             <Route path="/skills" element={<Skills onMatrixToggle={toggleMatrix} onPartyToggle={toggleParty} onThemeChange={updateTheme} isTerminalOpen={isTerminalOpen} setIsTerminalOpen={toggleTerminal} />} />
             <Route path="/about" element={<About onMatrixToggle={toggleMatrix} onPartyToggle={toggleParty} onThemeChange={updateTheme} isTerminalOpen={isTerminalOpen} setIsTerminalOpen={toggleTerminal} />} />
