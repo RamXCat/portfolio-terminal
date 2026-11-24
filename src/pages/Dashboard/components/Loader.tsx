@@ -226,7 +226,7 @@ export default function Loader({ onComplete, onSelectMode }: LoaderProps) {
                 backgroundColor: '#E63946' 
               }}
               animate={{ 
-                opacity: [0, 0.95, 0.95, 0.95, 0], 
+                opacity: [0, 1, 1, 1, 1], 
                 backgroundColor: [
                   '#E63946', // 1. Pure Crimson Red (0% - 30%)
                   '#00B4D8', // 2. Smoothly melts into Electric Cyan-Blue (30% - 60%)
@@ -263,7 +263,7 @@ export default function Loader({ onComplete, onSelectMode }: LoaderProps) {
             <motion.div
               initial={{ opacity: 0, scale: 0.3 }}
               animate={{ 
-                opacity: [0, 0, 0.95, 0], 
+                opacity: [0, 0, 0.95, 0.9], 
                 scale: [0.3, 0.6, 1.4, 2.0] 
               }}
               transition={{ 
@@ -277,8 +277,12 @@ export default function Loader({ onComplete, onSelectMode }: LoaderProps) {
         )}
       </AnimatePresence>
 
-      {/* 5. Minimalist Content in Center Void */}
-      <div className="relative z-10 flex flex-col items-center justify-center text-center space-y-12 max-w-lg">
+      {/* 5. Minimalist Content in Center Void (Fades out immediately when chosen so pills never re-appear) */}
+      <motion.div 
+        animate={{ opacity: isFlashing ? 0 : 1, scale: isFlashing ? 0.95 : 1 }}
+        transition={{ duration: 0.25 }}
+        className="relative z-10 flex flex-col items-center justify-center text-center space-y-12 max-w-lg"
+      >
         
         {/* Typewritten Phosphor Green Headline (#00ff41) with blinking block cursor */}
         <div className="h-6 flex items-center justify-center">
