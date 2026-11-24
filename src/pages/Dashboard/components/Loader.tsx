@@ -382,7 +382,7 @@ export default function Loader({ onComplete, onSelectMode }: LoaderProps) {
 
         </div>
 
-      </div>
+      </motion.div>
     </motion.div>
   );
 }
