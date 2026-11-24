@@ -37,6 +37,16 @@
   }
 }
 
+/* Hide default OS cursor when custom bubble cursor is active (devices with fine pointer) */
+@media (pointer: fine) {
+  body:not(.game-active) *, 
+  body:not(.game-active) *::before, 
+  body:not(.game-active) *::after, 
+  body:not(.game-active) {
+    cursor: none !important;
+  }
+}
+
 /* --- Theme Overrides --- */
 
 [data-theme="retro"] {
