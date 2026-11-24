@@ -143,7 +143,8 @@ export default function Loader({ onComplete, onSelectMode }: LoaderProps) {
     };
   }, []);
 
-  // Handle Pill Selection with payoff screen flash & transition (Red + Blue converges into Purple Dashboard)
+  // Handle Pill Selection with payoff screen flash & transition:
+  // Starts with vivid Red, flows & collides into vivid Blue, fusing together into vibrant Purple (#C778DD)
   const handlePillChoice = (mode: PortfolioMode) => {
     const pillColor = mode === 'terminal' ? 'red' : 'blue';
     setSelectedPill(pillColor);
@@ -153,10 +154,10 @@ export default function Loader({ onComplete, onSelectMode }: LoaderProps) {
       onSelectMode(mode);
     }
 
-    // Give time for initial chosen pill color to converge smoothly into cyber-purple
+    // Full 950ms cinematic sequence: Red ➔ Blue ➔ Purple ➔ Dashboard
     setTimeout(() => {
       if (onComplete) onComplete();
-    }, 650);
+    }, 950);
   };
 
   // Keyboard navigation: Left Arrow (Red), Right Arrow (Blue), Enter
@@ -214,37 +215,65 @@ export default function Loader({ onComplete, onSelectMode }: LoaderProps) {
       {/* 3. Faint phosphor green glow on page edges */}
       <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_80px_rgba(0,255,65,0.06)] z-[6]" />
 
-      {/* 4. Screen Color Convergence Flash (Selected Red/Blue flows & blends into Purple Dashboard) */}
+      {/* 4. Cinematic Color Metamorphosis: Red ➔ Blue ➔ Purple Fusion */}
       <AnimatePresence>
         {isFlashing && (
-          <>
-            {/* Primary Pill Burst: starts as chosen pill color (Red/Blue) and rapidly bleeds into rich Purple (#9d4edd) */}
+          <div className="fixed inset-0 z-50 pointer-events-none overflow-hidden">
+            {/* Chromatic Sweep: Pure Red morphing into Electric Blue, then into Royal Cyber Purple */}
             <motion.div
               initial={{ 
                 opacity: 0, 
-                backgroundColor: selectedPill === 'red' ? '#FF1E56' : '#0096C7' 
+                backgroundColor: '#FF1E56' 
               }}
               animate={{ 
-                opacity: [0, 0.95, 0.98, 0], 
+                opacity: [0, 0.95, 0.95, 0.95, 0], 
                 backgroundColor: [
-                  selectedPill === 'red' ? '#FF1E56' : '#0096C7',
-                  '#a855f7',
-                  '#7928CA',
-                  '#C778DD'
+                  '#FF1E56', // 1. Starts Pure Red
+                  '#0096C7', // 2. Transitions into Vivid Electric Blue
+                  '#8B00FF', // 3. Meets and fuses into deep Indigo-Purple
+                  '#C778DD'  // 4. Settles on signature Obsidian Purple
                 ] 
               }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.65, ease: 'easeInOut' }}
-              className="fixed inset-0 z-50 pointer-events-none"
+              transition={{ 
+                duration: 0.95, 
+                times: [0, 0.32, 0.65, 0.85, 1],
+                ease: 'easeInOut' 
+              }}
+              className="absolute inset-0"
             />
-            {/* Dual Red & Blue Radial Fusion Rays meeting in center to synthesize purple */}
+
+            {/* Red Wave entering from Left */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: [0, 0.85, 0], scale: [0.8, 1.2, 1.5] }}
-              transition={{ duration: 0.65, ease: 'easeOut' }}
-              className="fixed inset-0 z-50 pointer-events-none bg-[radial-gradient(circle_at_center,_rgba(199,120,221,0.9)_0%,_rgba(121,40,202,0.6)_45%,_transparent_80%)]"
+              initial={{ x: '-100%', opacity: 0.9 }}
+              animate={{ x: '100%', opacity: [0.9, 0.7, 0] }}
+              transition={{ duration: 0.7, ease: 'easeInOut' }}
+              className="absolute inset-0 bg-gradient-to-r from-[#FF0055] via-[#FF1E56] to-transparent w-full"
             />
-          </>
+
+            {/* Blue Wave entering from Right, colliding in center */}
+            <motion.div
+              initial={{ x: '100%', opacity: 0.9 }}
+              animate={{ x: '-100%', opacity: [0.9, 0.7, 0] }}
+              transition={{ duration: 0.7, ease: 'easeInOut' }}
+              className="absolute inset-0 bg-gradient-to-l from-[#00D4FF] via-[#0096C7] to-transparent w-full"
+            />
+
+            {/* Central Purple Bloom Shockwave ignited when Red & Blue collide */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.2 }}
+              animate={{ 
+                opacity: [0, 0, 0.95, 0], 
+                scale: [0.2, 0.5, 1.4, 1.8] 
+              }}
+              transition={{ 
+                duration: 0.95, 
+                times: [0, 0.35, 0.7, 1],
+                ease: 'easeOut' 
+              }}
+              className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(199,120,221,0.95)_0%,_rgba(139,0,255,0.75)_45%,_transparent_75%)]"
+            />
+          </div>
         )}
       </AnimatePresence>
 
