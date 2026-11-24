@@ -65,14 +65,13 @@ const SKILLS = [
   { title: "Frameworks", items: ["SpringBoot", "React"] }
 ];
 
-export default function Dashboard({ onMatrixToggle, onPartyToggle, onThemeChange, isTerminalOpen, setIsTerminalOpen, onModeChange, onEnterPortfolio }: {
+export default function Dashboard({ onMatrixToggle, onPartyToggle, onThemeChange, isTerminalOpen, setIsTerminalOpen, onModeChange }: {
   onMatrixToggle: () => void,
   onPartyToggle: () => void,
   onThemeChange: (theme: string) => void,
   isTerminalOpen: boolean,
   setIsTerminalOpen: (open?: boolean) => void,
-  onModeChange?: (mode: any) => void,
-  onEnterPortfolio?: () => void
+  onModeChange?: (mode: any) => void
 }) {
   const [loading, setLoading] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -101,10 +100,7 @@ export default function Dashboard({ onMatrixToggle, onPartyToggle, onThemeChange
       <AnimatePresence>
         {loading && (
           <Loader 
-            onComplete={() => {
-              setLoading(false);
-              if (onEnterPortfolio) onEnterPortfolio();
-            }} 
+            onComplete={() => setLoading(false)} 
             onSelectMode={onModeChange} 
           />
         )}
