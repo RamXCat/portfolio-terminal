@@ -8,6 +8,7 @@ interface CursorBubbleProps {
 export default function CursorBubble({ currentTheme = "default" }: CursorBubbleProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [isHoveringClickable, setIsHoveringClickable] = useState(false);
+  const [isHoveringPill, setIsHoveringPill] = useState(false);
   const [isClicking, setIsClicking] = useState(false);
   const [isScrolling, setIsScrolling] = useState(false);
   const [bubbleTheme, setBubbleTheme] = useState<string>("retro");
@@ -51,11 +52,13 @@ export default function CursorBubble({ currentTheme = "default" }: CursorBubbleP
       mouseY.set(e.clientY);
       if (!isVisible) setIsVisible(true);
 
-      // Check if hovering over clickable elements
+      // Check if hovering over clickable elements or Morpheus pills
       const target = e.target as HTMLElement | null;
       if (target) {
         const isClickable = !!target.closest('a, button, input, [role="button"], textarea, select, .cursor-pointer');
+        const isPill = !!target.closest('button[title*="Red Pill"], button[title*="Blue Pill"], button[title*="Terminal + GUI"], button[title*="Only GUI"]');
         setIsHoveringClickable(isClickable);
+        setIsHoveringPill(isPill);
       }
     };
 
@@ -92,15 +95,18 @@ export default function CursorBubble({ currentTheme = "default" }: CursorBubbleP
 
   if (!isVisible) return null;
 
-  // Sleek compact sizing:
+  // Sleek compact sizing with 1.5x expansion over pills:
   // Base: 44px
-  // When scrolling: 52px
-  // Hovering clickable: 64px
+  // Hovering pill: 70px (1.5x expansion, feels like it is "selecting" the pill)
+  // Hovering clickable: 60px
+  // Scrolling: 52px
   // Clicking: 36px
   const bubbleSize = isClicking 
     ? 36 
+    : isHoveringPill
+    ? 72
     : isHoveringClickable 
-    ? 64 
+    ? 60 
     : isScrolling 
     ? 52 
     : 44;
