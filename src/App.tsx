@@ -20,6 +20,9 @@ const MatrixRain = lazy(() => import("./components/MatrixRain"));
 const PartyMode = lazy(() => import("./components/PartyMode"));
 
 export default function App() {
+  const [hasEnteredPortfolio, setHasEnteredPortfolio] = useState(() => {
+    return false;
+  });
   const [viewMode, setViewMode] = useState<PortfolioMode>(() => {
     return (localStorage.getItem('portfolio_view_mode') as PortfolioMode) || 'terminal';
   });
@@ -116,7 +119,7 @@ export default function App() {
     <BrowserRouter>
       <ScrollToTop />
       <ScrollProgressBar />
-      {!isGameActive && <CursorBubble currentTheme={theme} />}
+      {!isGameActive && <CursorBubble currentTheme={hasEnteredPortfolio ? theme : 'matrix'} />}
       {!isGameActive && (
         <ModeSwitcher 
           currentMode={viewMode} 
@@ -153,7 +156,7 @@ export default function App() {
         )}
         <Suspense fallback={null}>
           <Routes>
-            <Route path="/" element={<Dashboard onMatrixToggle={toggleMatrix} onPartyToggle={toggleParty} onThemeChange={updateTheme} isTerminalOpen={isTerminalOpen} setIsTerminalOpen={toggleTerminal} onModeChange={handleModeChange} />} />
+            <Route path="/" element={<Dashboard onMatrixToggle={toggleMatrix} onPartyToggle={toggleParty} onThemeChange={updateTheme} isTerminalOpen={isTerminalOpen} setIsTerminalOpen={toggleTerminal} onModeChange={handleModeChange} onEnterPortfolio={() => setHasEnteredPortfolio(true)} />} />
             <Route path="/projects" element={<Projects onMatrixToggle={toggleMatrix} onPartyToggle={toggleParty} onThemeChange={updateTheme} isTerminalOpen={isTerminalOpen} setIsTerminalOpen={toggleTerminal} />} />
             <Route path="/skills" element={<Skills onMatrixToggle={toggleMatrix} onPartyToggle={toggleParty} onThemeChange={updateTheme} isTerminalOpen={isTerminalOpen} setIsTerminalOpen={toggleTerminal} />} />
             <Route path="/about" element={<About onMatrixToggle={toggleMatrix} onPartyToggle={toggleParty} onThemeChange={updateTheme} isTerminalOpen={isTerminalOpen} setIsTerminalOpen={toggleTerminal} />} />

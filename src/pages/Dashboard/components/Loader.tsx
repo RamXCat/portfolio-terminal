@@ -1,6 +1,67 @@
-import { motion, AnimatePresence } from "motion/react";
-import { useEffect, useState, useRef } from "react";
+import { motion, AnimatePresence, useMotionValue, useSpring } from "motion/react";
+import { useEffect, useState, useRef, useCallback, ReactNode } from "react";
 import { PortfolioMode } from "../../../components/ModeSwitcher";
+
+interface MagneticProps {
+  magneticDistance?: number;
+  strength?: number;
+  stiffness?: number;
+  damping?: number;
+  children: ReactNode | ((isHovering: boolean) => ReactNode);
+}
+
+function Magnetic({
+  magneticDistance = 200,
+  strength = 0.9,
+  stiffness = 80,
+  damping = 10,
+  children,
+}: MagneticProps) {
+  const ref = useRef<HTMLDivElement>(null);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const springX = useSpring(x, { stiffness, damping });
+  const springY = useSpring(y, { stiffness, damping });
+  const [isHovering, setIsHovering] = useState(false);
+
+  const onMouseMove = useCallback(
+    (e: MouseEvent) => {
+      if (!ref.current) return;
+      const rect = ref.current.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const dx = e.clientX - cx;
+      const dy = e.clientY - cy;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist < magneticDistance) {
+        const pull = Math.pow(1 - dist / magneticDistance, 0.5);
+        x.set(dx * pull * strength);
+        y.set(dy * pull * strength);
+        setIsHovering(true);
+      } else {
+        x.set(0);
+        y.set(0);
+        setIsHovering(false);
+      }
+    },
+    [x, y, magneticDistance, strength]
+  );
+
+  useEffect(() => {
+    window.addEventListener('mousemove', onMouseMove);
+    return () => window.removeEventListener('mousemove', onMouseMove);
+  }, [onMouseMove]);
+
+  return (
+    <motion.div
+      ref={ref}
+      style={{ x: springX, y: springY, display: 'inline-block' }}
+    >
+      {typeof children === 'function' ? children(isHovering) : children}
+    </motion.div>
+  );
+}
 
 interface LoaderProps {
   onComplete?: () => void;
@@ -242,32 +303,36 @@ export default function Loader({ onComplete, onSelectMode }: LoaderProps) {
           </p>
         </div>
 
-        {/* The Two Pills (Strictly Aligned on Same Baseline, Large Tap Targets) */}
+        {/* The Two Pills (Strictly Aligned on Same Baseline, Large Tap Targets, Magnetic Spring Physics) */}
         <div className="flex items-start justify-center gap-14 sm:gap-20">
           
           {/* 🔴 RED PILL */}
           <div className="flex flex-col items-center space-y-3 w-32 sm:w-36">
-            <button
-              type="button"
-              onMouseEnter={() => setHoveredPill('red')}
-              onMouseLeave={() => setHoveredPill(null)}
-              onFocus={() => setHoveredPill('red')}
-              onBlur={() => setHoveredPill(null)}
-              onClick={() => handlePillChoice('terminal')}
-              className={`group relative p-2 rounded-full transition-all duration-300 ease-out cursor-pointer active:scale-95 outline-none flex items-center justify-center ${
-                hoveredPill === 'blue' ? 'opacity-25' : 'opacity-100'
-              }`}
-            >
-              {/* Red Capsule Pill: Scales 1.08 from center on hover, soft halo glow */}
-              <div 
-                className={`relative w-24 h-11 sm:w-28 sm:h-12 rounded-full bg-gradient-to-r from-[#D90429] via-[#EF233C] to-[#FF2A6D] border border-white/40 shadow-[0_0_20px_rgba(239,35,60,0.5),inset_0_2px_4px_rgba(255,255,255,0.6)] flex items-center justify-center transition-all duration-300 ${
-                  hoveredPill === 'red' ? 'scale-[1.08] shadow-[0_0_35px_rgba(255,42,109,0.8)]' : ''
-                }`}
-              >
-                <span className="w-1/2 h-full rounded-l-full bg-white/15 border-r border-black/25" />
-                <span className="w-1/2 h-full rounded-r-full" />
-              </div>
-            </button>
+            <Magnetic magneticDistance={160} strength={0.65} stiffness={100} damping={12}>
+              {(isMagneticHovering) => (
+                <button
+                  type="button"
+                  onMouseEnter={() => setHoveredPill('red')}
+                  onMouseLeave={() => setHoveredPill(null)}
+                  onFocus={() => setHoveredPill('red')}
+                  onBlur={() => setHoveredPill(null)}
+                  onClick={() => handlePillChoice('terminal')}
+                  className={`group relative p-2 rounded-full transition-all duration-300 ease-out cursor-pointer active:scale-95 outline-none flex items-center justify-center ${
+                    hoveredPill === 'blue' ? 'opacity-25' : 'opacity-100'
+                  }`}
+                >
+                  {/* Red Capsule Pill: Scales 1.08 from center on hover, soft halo glow */}
+                  <div 
+                    className={`relative w-24 h-11 sm:w-28 sm:h-12 rounded-full bg-gradient-to-r from-[#D90429] via-[#EF233C] to-[#FF2A6D] border border-white/40 shadow-[0_0_20px_rgba(239,35,60,0.5),inset_0_2px_4px_rgba(255,255,255,0.6)] flex items-center justify-center transition-all duration-300 ${
+                      hoveredPill === 'red' || isMagneticHovering ? 'scale-[1.08] shadow-[0_0_35px_rgba(255,42,109,0.8)]' : ''
+                    }`}
+                  >
+                    <span className="w-1/2 h-full rounded-l-full bg-white/15 border-r border-black/25" />
+                    <span className="w-1/2 h-full rounded-r-full" />
+                  </div>
+                </button>
+              )}
+            </Magnetic>
 
             {/* Stable Single-Line Caption in Phosphor Green with Smooth Fade-in Detail */}
             <div className="text-center h-10 flex flex-col items-center justify-start">
@@ -288,27 +353,31 @@ export default function Loader({ onComplete, onSelectMode }: LoaderProps) {
 
           {/* 🔵 BLUE PILL */}
           <div className="flex flex-col items-center space-y-3 w-32 sm:w-36">
-            <button
-              type="button"
-              onMouseEnter={() => setHoveredPill('blue')}
-              onMouseLeave={() => setHoveredPill(null)}
-              onFocus={() => setHoveredPill('blue')}
-              onBlur={() => setHoveredPill(null)}
-              onClick={() => handlePillChoice('gui')}
-              className={`group relative p-2 rounded-full transition-all duration-300 ease-out cursor-pointer active:scale-95 outline-none flex items-center justify-center ${
-                hoveredPill === 'red' ? 'opacity-25' : 'opacity-100'
-              }`}
-            >
-              {/* Blue Capsule Pill: Scales 1.08 from center on hover, soft halo glow */}
-              <div 
-                className={`relative w-24 h-11 sm:w-28 sm:h-12 rounded-full bg-gradient-to-r from-[#0077B6] via-[#0096C7] to-[#00B4D8] border border-white/40 shadow-[0_0_20px_rgba(0,180,216,0.5),inset_0_2px_4px_rgba(255,255,255,0.6)] flex items-center justify-center transition-all duration-300 ${
-                  hoveredPill === 'blue' ? 'scale-[1.08] shadow-[0_0_35px_rgba(0,180,216,0.8)]' : ''
-                }`}
-              >
-                <span className="w-1/2 h-full rounded-l-full bg-white/15 border-r border-black/25" />
-                <span className="w-1/2 h-full rounded-r-full" />
-              </div>
-            </button>
+            <Magnetic magneticDistance={160} strength={0.65} stiffness={100} damping={12}>
+              {(isMagneticHovering) => (
+                <button
+                  type="button"
+                  onMouseEnter={() => setHoveredPill('blue')}
+                  onMouseLeave={() => setHoveredPill(null)}
+                  onFocus={() => setHoveredPill('blue')}
+                  onBlur={() => setHoveredPill(null)}
+                  onClick={() => handlePillChoice('gui')}
+                  className={`group relative p-2 rounded-full transition-all duration-300 ease-out cursor-pointer active:scale-95 outline-none flex items-center justify-center ${
+                    hoveredPill === 'red' ? 'opacity-25' : 'opacity-100'
+                  }`}
+                >
+                  {/* Blue Capsule Pill: Scales 1.08 from center on hover, soft halo glow */}
+                  <div 
+                    className={`relative w-24 h-11 sm:w-28 sm:h-12 rounded-full bg-gradient-to-r from-[#0077B6] via-[#0096C7] to-[#00B4D8] border border-white/40 shadow-[0_0_20px_rgba(0,180,216,0.5),inset_0_2px_4px_rgba(255,255,255,0.6)] flex items-center justify-center transition-all duration-300 ${
+                      hoveredPill === 'blue' || isMagneticHovering ? 'scale-[1.08] shadow-[0_0_35px_rgba(0,180,216,0.8)]' : ''
+                    }`}
+                  >
+                    <span className="w-1/2 h-full rounded-l-full bg-white/15 border-r border-black/25" />
+                    <span className="w-1/2 h-full rounded-r-full" />
+                  </div>
+                </button>
+              )}
+            </Magnetic>
 
             {/* Stable Single-Line Caption in Phosphor Green with Smooth Fade-in Detail */}
             <div className="text-center h-10 flex flex-col items-center justify-start">
