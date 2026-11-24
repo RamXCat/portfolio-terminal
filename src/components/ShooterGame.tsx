@@ -1237,6 +1237,15 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
         }
       }
 
+      // Downward control (S / Down Arrow / Joystick DOWN) - Allows dropping through platforms or fast-falling
+      const isDownKeyDown = keysPressed.current['s'] || keysPressed.current['arrowdown'] || joyY > 0.45;
+      if (isDownKeyDown) {
+        // Fast-fall impulse if in the air
+        if (!p.isGrounded) {
+          p.vy = Math.min(14, p.vy + 0.8);
+        }
+      }
+
       // Apply Gravity
       p.vy += gravity;
       p.x += p.vx;
@@ -1259,24 +1268,27 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
       }
 
       // Check collision with DOM elements (Buttons, Navbar, Cards)
-      for (const plat of platforms) {
-        const r = plat.rect;
-        // Check if player feet land on top of DOM element
-        const playerBottom = p.y + p.height;
-        const playerPrevBottom = playerBottom - p.vy;
+      // When holding DOWN (Joystick down, S, or ArrowDown), the operative drops through platforms
+      if (!isDownKeyDown) {
+        for (const plat of platforms) {
+          const r = plat.rect;
+          // Check if player feet land on top of DOM element
+          const playerBottom = p.y + p.height;
+          const playerPrevBottom = playerBottom - p.vy;
 
-        if (
-          p.x + p.width / 2 > r.left &&
-          p.x - p.width / 2 < r.right &&
-          playerPrevBottom <= r.top + 10 &&
-          playerBottom >= r.top &&
-          p.vy >= 0
-        ) {
-          p.y = r.top - p.height;
-          p.vy = 0;
-          p.isGrounded = true;
-          p.jetpackFuel = Math.min(100, p.jetpackFuel + 3.0);
-          break;
+          if (
+            p.x + p.width / 2 > r.left &&
+            p.x - p.width / 2 < r.right &&
+            playerPrevBottom <= r.top + 10 &&
+            playerBottom >= r.top &&
+            p.vy >= 0
+          ) {
+            p.y = r.top - p.height;
+            p.vy = 0;
+            p.isGrounded = true;
+            p.jetpackFuel = Math.min(100, p.jetpackFuel + 3.0);
+            break;
+          }
         }
       }
 
