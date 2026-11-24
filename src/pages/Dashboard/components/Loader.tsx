@@ -1,67 +1,6 @@
-import { motion, AnimatePresence, useMotionValue, useSpring } from "motion/react";
-import { useEffect, useState, useRef, useCallback, ReactNode } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import { useEffect, useState, useRef } from "react";
 import { PortfolioMode } from "../../../components/ModeSwitcher";
-
-interface MagneticProps {
-  magneticDistance?: number;
-  strength?: number;
-  stiffness?: number;
-  damping?: number;
-  children: ReactNode | ((isHovering: boolean) => ReactNode);
-}
-
-function Magnetic({
-  magneticDistance = 200,
-  strength = 0.9,
-  stiffness = 80,
-  damping = 10,
-  children,
-}: MagneticProps) {
-  const ref = useRef<HTMLDivElement>(null);
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const springX = useSpring(x, { stiffness, damping });
-  const springY = useSpring(y, { stiffness, damping });
-  const [isHovering, setIsHovering] = useState(false);
-
-  const onMouseMove = useCallback(
-    (e: MouseEvent) => {
-      if (!ref.current) return;
-      const rect = ref.current.getBoundingClientRect();
-      const cx = rect.left + rect.width / 2;
-      const cy = rect.top + rect.height / 2;
-      const dx = e.clientX - cx;
-      const dy = e.clientY - cy;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-
-      if (dist < magneticDistance) {
-        const pull = Math.pow(1 - dist / magneticDistance, 0.5);
-        x.set(dx * pull * strength);
-        y.set(dy * pull * strength);
-        setIsHovering(true);
-      } else {
-        x.set(0);
-        y.set(0);
-        setIsHovering(false);
-      }
-    },
-    [x, y, magneticDistance, strength]
-  );
-
-  useEffect(() => {
-    window.addEventListener('mousemove', onMouseMove);
-    return () => window.removeEventListener('mousemove', onMouseMove);
-  }, [onMouseMove]);
-
-  return (
-    <motion.div
-      ref={ref}
-      style={{ x: springX, y: springY, display: 'inline-block' }}
-    >
-      {typeof children === 'function' ? children(isHovering) : children}
-    </motion.div>
-  );
-}
 
 interface LoaderProps {
   onComplete?: () => void;
@@ -204,7 +143,7 @@ export default function Loader({ onComplete, onSelectMode }: LoaderProps) {
     };
   }, []);
 
-  // Handle Pill Selection with payoff screen flash & transition
+  // Handle Pill Selection with payoff screen flash & transition (Red + Blue converges into Purple Dashboard)
   const handlePillChoice = (mode: PortfolioMode) => {
     const pillColor = mode === 'terminal' ? 'red' : 'blue';
     setSelectedPill(pillColor);
@@ -214,9 +153,10 @@ export default function Loader({ onComplete, onSelectMode }: LoaderProps) {
       onSelectMode(mode);
     }
 
+    // Give time for initial chosen pill color to converge smoothly into cyber-purple
     setTimeout(() => {
       if (onComplete) onComplete();
-    }, 450);
+    }, 650);
   };
 
   // Keyboard navigation: Left Arrow (Red), Right Arrow (Blue), Enter
@@ -274,18 +214,37 @@ export default function Loader({ onComplete, onSelectMode }: LoaderProps) {
       {/* 3. Faint phosphor green glow on page edges */}
       <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_80px_rgba(0,255,65,0.06)] z-[6]" />
 
-      {/* 4. Screen Color Flash on Pill Choice Payoff */}
+      {/* 4. Screen Color Convergence Flash (Selected Red/Blue flows & blends into Purple Dashboard) */}
       <AnimatePresence>
         {isFlashing && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.9 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className={`fixed inset-0 z-50 pointer-events-none ${
-              selectedPill === 'red' ? 'bg-[#FF1E56]' : 'bg-[#0096C7]'
-            }`}
-          />
+          <>
+            {/* Primary Pill Burst: starts as chosen pill color (Red/Blue) and rapidly bleeds into rich Purple (#9d4edd) */}
+            <motion.div
+              initial={{ 
+                opacity: 0, 
+                backgroundColor: selectedPill === 'red' ? '#FF1E56' : '#0096C7' 
+              }}
+              animate={{ 
+                opacity: [0, 0.95, 0.98, 0], 
+                backgroundColor: [
+                  selectedPill === 'red' ? '#FF1E56' : '#0096C7',
+                  '#a855f7',
+                  '#7928CA',
+                  '#C778DD'
+                ] 
+              }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.65, ease: 'easeInOut' }}
+              className="fixed inset-0 z-50 pointer-events-none"
+            />
+            {/* Dual Red & Blue Radial Fusion Rays meeting in center to synthesize purple */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: [0, 0.85, 0], scale: [0.8, 1.2, 1.5] }}
+              transition={{ duration: 0.65, ease: 'easeOut' }}
+              className="fixed inset-0 z-50 pointer-events-none bg-[radial-gradient(circle_at_center,_rgba(199,120,221,0.9)_0%,_rgba(121,40,202,0.6)_45%,_transparent_80%)]"
+            />
+          </>
         )}
       </AnimatePresence>
 
@@ -303,36 +262,32 @@ export default function Loader({ onComplete, onSelectMode }: LoaderProps) {
           </p>
         </div>
 
-        {/* The Two Pills (Strictly Aligned on Same Baseline, Large Tap Targets, Magnetic Spring Physics) */}
+        {/* The Two Pills (Strictly Aligned on Same Baseline, Large Tap Targets) */}
         <div className="flex items-start justify-center gap-14 sm:gap-20">
           
           {/* 🔴 RED PILL */}
           <div className="flex flex-col items-center space-y-3 w-32 sm:w-36">
-            <Magnetic magneticDistance={160} strength={0.65} stiffness={100} damping={12}>
-              {(isMagneticHovering) => (
-                <button
-                  type="button"
-                  onMouseEnter={() => setHoveredPill('red')}
-                  onMouseLeave={() => setHoveredPill(null)}
-                  onFocus={() => setHoveredPill('red')}
-                  onBlur={() => setHoveredPill(null)}
-                  onClick={() => handlePillChoice('terminal')}
-                  className={`group relative p-2 rounded-full transition-all duration-300 ease-out cursor-pointer active:scale-95 outline-none flex items-center justify-center ${
-                    hoveredPill === 'blue' ? 'opacity-25' : 'opacity-100'
-                  }`}
-                >
-                  {/* Red Capsule Pill: Scales 1.08 from center on hover, soft halo glow */}
-                  <div 
-                    className={`relative w-24 h-11 sm:w-28 sm:h-12 rounded-full bg-gradient-to-r from-[#D90429] via-[#EF233C] to-[#FF2A6D] border border-white/40 shadow-[0_0_20px_rgba(239,35,60,0.5),inset_0_2px_4px_rgba(255,255,255,0.6)] flex items-center justify-center transition-all duration-300 ${
-                      hoveredPill === 'red' || isMagneticHovering ? 'scale-[1.08] shadow-[0_0_35px_rgba(255,42,109,0.8)]' : ''
-                    }`}
-                  >
-                    <span className="w-1/2 h-full rounded-l-full bg-white/15 border-r border-black/25" />
-                    <span className="w-1/2 h-full rounded-r-full" />
-                  </div>
-                </button>
-              )}
-            </Magnetic>
+            <button
+              type="button"
+              onMouseEnter={() => setHoveredPill('red')}
+              onMouseLeave={() => setHoveredPill(null)}
+              onFocus={() => setHoveredPill('red')}
+              onBlur={() => setHoveredPill(null)}
+              onClick={() => handlePillChoice('terminal')}
+              className={`group relative p-2 rounded-full transition-all duration-300 ease-out cursor-pointer active:scale-95 outline-none flex items-center justify-center ${
+                hoveredPill === 'blue' ? 'opacity-25' : 'opacity-100'
+              }`}
+            >
+              {/* Red Capsule Pill: Scales 1.08 from center on hover, soft halo glow */}
+              <div 
+                className={`relative w-24 h-11 sm:w-28 sm:h-12 rounded-full bg-gradient-to-r from-[#D90429] via-[#EF233C] to-[#FF2A6D] border border-white/40 shadow-[0_0_20px_rgba(239,35,60,0.5),inset_0_2px_4px_rgba(255,255,255,0.6)] flex items-center justify-center transition-all duration-300 ${
+                  hoveredPill === 'red' ? 'scale-[1.08] shadow-[0_0_35px_rgba(255,42,109,0.8)]' : ''
+                }`}
+              >
+                <span className="w-1/2 h-full rounded-l-full bg-white/15 border-r border-black/25" />
+                <span className="w-1/2 h-full rounded-r-full" />
+              </div>
+            </button>
 
             {/* Stable Single-Line Caption in Phosphor Green with Smooth Fade-in Detail */}
             <div className="text-center h-10 flex flex-col items-center justify-start">
@@ -353,31 +308,27 @@ export default function Loader({ onComplete, onSelectMode }: LoaderProps) {
 
           {/* 🔵 BLUE PILL */}
           <div className="flex flex-col items-center space-y-3 w-32 sm:w-36">
-            <Magnetic magneticDistance={160} strength={0.65} stiffness={100} damping={12}>
-              {(isMagneticHovering) => (
-                <button
-                  type="button"
-                  onMouseEnter={() => setHoveredPill('blue')}
-                  onMouseLeave={() => setHoveredPill(null)}
-                  onFocus={() => setHoveredPill('blue')}
-                  onBlur={() => setHoveredPill(null)}
-                  onClick={() => handlePillChoice('gui')}
-                  className={`group relative p-2 rounded-full transition-all duration-300 ease-out cursor-pointer active:scale-95 outline-none flex items-center justify-center ${
-                    hoveredPill === 'red' ? 'opacity-25' : 'opacity-100'
-                  }`}
-                >
-                  {/* Blue Capsule Pill: Scales 1.08 from center on hover, soft halo glow */}
-                  <div 
-                    className={`relative w-24 h-11 sm:w-28 sm:h-12 rounded-full bg-gradient-to-r from-[#0077B6] via-[#0096C7] to-[#00B4D8] border border-white/40 shadow-[0_0_20px_rgba(0,180,216,0.5),inset_0_2px_4px_rgba(255,255,255,0.6)] flex items-center justify-center transition-all duration-300 ${
-                      hoveredPill === 'blue' || isMagneticHovering ? 'scale-[1.08] shadow-[0_0_35px_rgba(0,180,216,0.8)]' : ''
-                    }`}
-                  >
-                    <span className="w-1/2 h-full rounded-l-full bg-white/15 border-r border-black/25" />
-                    <span className="w-1/2 h-full rounded-r-full" />
-                  </div>
-                </button>
-              )}
-            </Magnetic>
+            <button
+              type="button"
+              onMouseEnter={() => setHoveredPill('blue')}
+              onMouseLeave={() => setHoveredPill(null)}
+              onFocus={() => setHoveredPill('blue')}
+              onBlur={() => setHoveredPill(null)}
+              onClick={() => handlePillChoice('gui')}
+              className={`group relative p-2 rounded-full transition-all duration-300 ease-out cursor-pointer active:scale-95 outline-none flex items-center justify-center ${
+                hoveredPill === 'red' ? 'opacity-25' : 'opacity-100'
+              }`}
+            >
+              {/* Blue Capsule Pill: Scales 1.08 from center on hover, soft halo glow */}
+              <div 
+                className={`relative w-24 h-11 sm:w-28 sm:h-12 rounded-full bg-gradient-to-r from-[#0077B6] via-[#0096C7] to-[#00B4D8] border border-white/40 shadow-[0_0_20px_rgba(0,180,216,0.5),inset_0_2px_4px_rgba(255,255,255,0.6)] flex items-center justify-center transition-all duration-300 ${
+                  hoveredPill === 'blue' ? 'scale-[1.08] shadow-[0_0_35px_rgba(0,180,216,0.8)]' : ''
+                }`}
+              >
+                <span className="w-1/2 h-full rounded-l-full bg-white/15 border-r border-black/25" />
+                <span className="w-1/2 h-full rounded-r-full" />
+              </div>
+            </button>
 
             {/* Stable Single-Line Caption in Phosphor Green with Smooth Fade-in Detail */}
             <div className="text-center h-10 flex flex-col items-center justify-start">
