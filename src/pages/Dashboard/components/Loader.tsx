@@ -215,63 +215,80 @@ export default function Loader({ onComplete, onSelectMode }: LoaderProps) {
       {/* 3. Faint phosphor green glow on page edges */}
       <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_80px_rgba(0,255,65,0.06)] z-[6]" />
 
-      {/* 4. Cinematic Color Metamorphosis: Smooth & Slow Red ➔ Blue ➔ Default Obsidian Purple Fusion */}
+      {/* 4. Luxury Obsidian Aurora Metamorphosis: High-End Red ➔ Blue ➔ Purple Transition */}
       <AnimatePresence>
         {isFlashing && (
-          <div className="fixed inset-0 z-50 pointer-events-none overflow-hidden">
-            {/* Chromatic Sweep: Pure Red morphing into Electric Blue, then into Default Obsidian Theme Purple */}
+          <div className="fixed inset-0 z-50 pointer-events-none overflow-hidden bg-[#0a0d12]">
+            {/* 1. Deep Obsidian Base Layer with Smooth Chromatic Shift */}
             <motion.div
-              initial={{ 
-                opacity: 0, 
-                backgroundColor: '#E63946' 
-              }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.4 }}
+              className="absolute inset-0 bg-[#0d1017]"
+            />
+
+            {/* 2. Fluid Liquid Aurora Orbs - Red & Blue merging in center */}
+            {/* Left Crimson-Rose Nebula Orb */}
+            <motion.div
+              initial={{ x: '-40%', y: '-10%', scale: 0.8, opacity: 0 }}
               animate={{ 
-                opacity: [0, 1, 1, 1, 1], 
-                backgroundColor: [
-                  '#E63946', // 1. Pure Crimson Red (0% - 30%)
-                  '#00B4D8', // 2. Smoothly melts into Electric Cyan-Blue (30% - 60%)
-                  '#B86BCE', // 3. Meets and fuses into Rich Violet-Purple (60% - 85%)
-                  '#C778DD'  // 4. Settles exactly on Default Theme Purple (#C778DD) (85% - 100%)
-                ] 
+                x: ['-40%', '5%', '20%'],
+                scale: [0.8, 1.3, 1.6],
+                opacity: [0, 0.9, 0.4, 0]
               }}
-              exit={{ opacity: 0 }}
-              transition={{ 
-                duration: 1.8, 
-                times: [0, 0.32, 0.65, 0.85, 1],
-                ease: 'easeInOut' 
-              }}
-              className="absolute inset-0"
+              transition={{ duration: 1.8, times: [0, 0.4, 0.75, 1], ease: [0.22, 1, 0.36, 1] }}
+              className="absolute top-1/4 -left-1/4 w-[75vw] h-[75vw] max-w-[900px] max-h-[900px] rounded-full blur-[120px] bg-gradient-to-tr from-[#E63946] via-[#FF2A6D] to-[#9B5DE5] mix-blend-screen"
             />
 
-            {/* Red Wave entering from Left across the screen */}
+            {/* Right Electric-Cyan Sapphire Orb */}
             <motion.div
-              initial={{ x: '-100%', opacity: 0.85 }}
-              animate={{ x: '100%', opacity: [0.85, 0.6, 0] }}
-              transition={{ duration: 1.3, ease: 'easeInOut' }}
-              className="absolute inset-0 bg-gradient-to-r from-[#D90429] via-[#EF233C] to-transparent w-full"
-            />
-
-            {/* Blue Wave entering from Right, colliding slowly in center */}
-            <motion.div
-              initial={{ x: '100%', opacity: 0.85 }}
-              animate={{ x: '-100%', opacity: [0.85, 0.6, 0] }}
-              transition={{ duration: 1.3, ease: 'easeInOut' }}
-              className="absolute inset-0 bg-gradient-to-l from-[#0077B6] via-[#0096C7] to-transparent w-full"
-            />
-
-            {/* Central Purple Bloom Shockwave ignited when Red & Blue collide and merge into #C778DD */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.3 }}
+              initial={{ x: '40%', y: '10%', scale: 0.8, opacity: 0 }}
               animate={{ 
-                opacity: [0, 0, 0.95, 0.9], 
-                scale: [0.3, 0.6, 1.4, 2.0] 
+                x: ['40%', '-5%', '-20%'],
+                scale: [0.8, 1.3, 1.6],
+                opacity: [0, 0.9, 0.4, 0]
               }}
-              transition={{ 
-                duration: 1.8, 
-                times: [0, 0.4, 0.75, 1],
-                ease: 'easeInOut' 
+              transition={{ duration: 1.8, times: [0, 0.4, 0.75, 1], ease: [0.22, 1, 0.36, 1] }}
+              className="absolute bottom-1/4 -right-1/4 w-[75vw] h-[75vw] max-w-[900px] max-h-[900px] rounded-full blur-[120px] bg-gradient-to-bl from-[#00D4FF] via-[#0077B6] to-[#7928CA] mix-blend-screen"
+            />
+
+            {/* Central Synthesis: Royal Purple Heart (#C778DD) expanding as Red & Blue unite */}
+            <motion.div
+              initial={{ scale: 0.4, opacity: 0 }}
+              animate={{ 
+                scale: [0.4, 0.8, 1.5, 2.2],
+                opacity: [0, 0.3, 0.95, 1]
               }}
-              className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(199,120,221,0.95)_0%,_rgba(184,107,206,0.8)_45%,_rgba(16,20,26,0.6)_75%,_transparent_100%)]"
+              transition={{ duration: 1.8, times: [0, 0.35, 0.7, 1], ease: [0.16, 1, 0.3, 1] }}
+              className="absolute inset-0 m-auto w-[85vw] h-[85vw] max-w-[1000px] max-h-[1000px] rounded-full blur-[100px] bg-[radial-gradient(circle,_#C778DD_0%,_#9D4EDD_35%,_#5A189A_65%,_transparent_80%)] mix-blend-screen"
+            />
+
+            {/* 3. Horizontal Anamorphic Flare / Prismatic Lens Flare */}
+            <motion.div
+              initial={{ scaleX: 0, opacity: 0 }}
+              animate={{ 
+                scaleX: [0, 1.8, 0.8],
+                opacity: [0, 0.85, 0]
+              }}
+              transition={{ duration: 1.4, times: [0, 0.5, 1], ease: 'easeOut' }}
+              className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[2px] bg-gradient-to-r from-transparent via-white to-transparent shadow-[0_0_25px_4px_#C778DD]"
+            />
+
+            {/* 4. Fine Film Grain Texture Overlay for Analog Cinematic Luxury */}
+            <div 
+              className="absolute inset-0 opacity-[0.035] pointer-events-none mix-blend-overlay"
+              style={{
+                backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+                backgroundSize: '120px 120px'
+              }}
+            />
+
+            {/* 5. Final Elegant Vignette & Veil to match Obsidian Surface (#10141a) */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: [0, 0, 0.6, 1] }}
+              transition={{ duration: 1.8, times: [0, 0.6, 0.85, 1], ease: 'easeInOut' }}
+              className="absolute inset-0 bg-[#10141a]/60 shadow-[inset_0_0_120px_rgba(10,13,18,0.95)]"
             />
           </div>
         )}
