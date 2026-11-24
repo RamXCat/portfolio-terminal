@@ -60,7 +60,7 @@ export default function Loader({ onComplete, onSelectMode }: LoaderProps) {
 
     for (let i = 0; i < columns; i++) {
       drops[i] = Math.floor(Math.random() * -60);
-      speeds[i] = Math.random() * 0.7 + 0.75;
+      speeds[i] = Math.random() * 0.35 + 0.32;
     }
 
     // Color interpolation between Matrix Phosphor Green, Red, and Blue
