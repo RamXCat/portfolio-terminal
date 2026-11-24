@@ -95,28 +95,28 @@ export default function CursorBubble({ currentTheme = "default" }: CursorBubbleP
 
   if (!isVisible) return null;
 
-  // Sleek compact sizing with 1.5x expansion over pills:
-  // Base: 44px
-  // Hovering pill: 70px (1.5x expansion, feels like it is "selecting" the pill)
-  // Hovering clickable: 60px
-  // Scrolling: 52px
-  // Clicking: 36px
+  // Sleek compact sizing with mix-blend-mode: difference:
+  // Base: 30px
+  // Hovering pill: 48px (~1.6x expansion, precision selection cue)
+  // Hovering clickable: 42px
+  // Scrolling: 36px
+  // Clicking: 24px
   const bubbleSize = isClicking 
-    ? 36 
+    ? 24 
     : isHoveringPill
-    ? 72
+    ? 48
     : isHoveringClickable 
-    ? 60 
+    ? 42 
     : isScrolling 
-    ? 52 
-    : 44;
+    ? 36 
+    : 30;
 
   return (
     <>
-      {/* 1. Portal Lens Bubble: Enlarged optical glass with distinct inverted palette */}
+      {/* 1. Precision Difference-Blend Cursor Bubble */}
       <motion.div
         aria-hidden="true"
-        className="pointer-events-none fixed top-0 left-0 z-[9990] rounded-full overflow-hidden transition-[width,height] duration-300 ease-out"
+        className="pointer-events-none fixed top-0 left-0 z-[9990] rounded-full border border-white/60 transition-[width,height] duration-200 ease-out"
         style={{
           width: bubbleSize,
           height: bubbleSize,
@@ -124,55 +124,25 @@ export default function CursorBubble({ currentTheme = "default" }: CursorBubbleP
           y: smoothY,
           translateX: '-50%',
           translateY: '-50%',
+          mixBlendMode: 'difference',
+          backgroundColor: 'rgba(255, 255, 255, 0.95)',
+          boxShadow: '0 0 12px rgba(255, 255, 255, 0.4)',
         }}
-      >
-        {/* Optical Glass Lens Effect with Theme Inversion */}
-        <div 
-          className={`w-full h-full rounded-full border border-primary/50 backdrop-contrast-125 transition-all duration-300 ${
-            bubbleTheme === 'retro'
-              ? 'backdrop-invert backdrop-hue-rotate-90 bg-pink-500/15 shadow-[0_0_35px_rgba(252,184,177,0.4)]'
-              : bubbleTheme === 'urbane'
-              ? 'backdrop-invert backdrop-hue-rotate-180 bg-lime-400/15 shadow-[0_0_35px_rgba(209,254,34,0.4)]'
-              : bubbleTheme === 'urbane-invert'
-              ? 'backdrop-invert bg-indigo-600/15 shadow-[0_0_35px_rgba(46,1,221,0.4)]'
-              : 'backdrop-invert backdrop-grayscale bg-white/15 shadow-[0_0_35px_rgba(255,255,255,0.4)]'
-          }`}
-          style={{
-            backdropFilter: isHoveringClickable 
-              ? 'invert(1) hue-rotate(180deg) contrast(1.25)' 
-              : isScrolling
-              ? 'invert(0.95) hue-rotate(120deg) contrast(1.2)'
-              : 'invert(0.9) hue-rotate(90deg) contrast(1.15)',
-            WebkitBackdropFilter: isHoveringClickable 
-              ? 'invert(1) hue-rotate(180deg) contrast(1.25)' 
-              : isScrolling
-              ? 'invert(0.95) hue-rotate(120deg) contrast(1.2)'
-              : 'invert(0.9) hue-rotate(90deg) contrast(1.15)',
-          }}
-        >
-          {/* Subtle cybernetic scanline / radar grid inside the lens */}
-          <div 
-            className="w-full h-full opacity-25 pointer-events-none rounded-full"
-            style={{
-              backgroundImage: 'radial-gradient(circle at center, transparent 35%, rgba(255,255,255,0.4) 100%)',
-            }}
-          />
-        </div>
-      </motion.div>
+      />
 
-      {/* 2. Precision Center Reticle / Dot */}
+      {/* 2. Precision Center Reticle Dot */}
       <motion.div
         aria-hidden="true"
-        className="pointer-events-none fixed top-0 left-0 z-[9995] rounded-full mix-blend-difference"
+        className="pointer-events-none fixed top-0 left-0 z-[9995] rounded-full"
         style={{
-          width: isHoveringClickable ? 7 : 5,
-          height: isHoveringClickable ? 7 : 5,
+          width: 4,
+          height: 4,
           x: mouseX,
           y: mouseY,
           translateX: '-50%',
           translateY: '-50%',
-          backgroundColor: '#ffffff',
-          boxShadow: '0 0 8px rgba(255, 255, 255, 0.9)',
+          backgroundColor: '#00ff41',
+          boxShadow: '0 0 6px #00ff41',
         }}
       />
     </>
