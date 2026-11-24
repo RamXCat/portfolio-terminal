@@ -154,10 +154,10 @@ export default function Loader({ onComplete, onSelectMode }: LoaderProps) {
       onSelectMode(mode);
     }
 
-    // Full 950ms cinematic sequence: Red ➔ Blue ➔ Purple ➔ Dashboard
+    // Smooth, slow cinematic sequence (1.8s) so the Red ➔ Blue ➔ Purple metamorphosis is clearly experienced
     setTimeout(() => {
       if (onComplete) onComplete();
-    }, 950);
+    }, 1800);
   };
 
   // Keyboard navigation: Left Arrow (Red), Right Arrow (Blue), Enter
@@ -215,7 +215,7 @@ export default function Loader({ onComplete, onSelectMode }: LoaderProps) {
       {/* 3. Faint phosphor green glow on page edges */}
       <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_80px_rgba(0,255,65,0.06)] z-[6]" />
 
-      {/* 4. Cinematic Color Metamorphosis: Red ➔ Blue ➔ Purple Fusion */}
+      {/* 4. Cinematic Color Metamorphosis: Smooth & Slow Red ➔ Blue ➔ Purple Fusion */}
       <AnimatePresence>
         {isFlashing && (
           <div className="fixed inset-0 z-50 pointer-events-none overflow-hidden">
@@ -223,55 +223,55 @@ export default function Loader({ onComplete, onSelectMode }: LoaderProps) {
             <motion.div
               initial={{ 
                 opacity: 0, 
-                backgroundColor: '#FF1E56' 
+                backgroundColor: '#E63946' 
               }}
               animate={{ 
                 opacity: [0, 0.95, 0.95, 0.95, 0], 
                 backgroundColor: [
-                  '#FF1E56', // 1. Starts Pure Red
-                  '#0096C7', // 2. Transitions into Vivid Electric Blue
-                  '#8B00FF', // 3. Meets and fuses into deep Indigo-Purple
-                  '#C778DD'  // 4. Settles on signature Obsidian Purple
+                  '#E63946', // 1. Pure Crimson Red (0% - 30%)
+                  '#00B4D8', // 2. Smoothly melts into Electric Cyan-Blue (30% - 60%)
+                  '#7209B7', // 3. Meets and fuses into deep Indigo-Purple (60% - 85%)
+                  '#C778DD'  // 4. Settles on signature Obsidian Purple (85% - 100%)
                 ] 
               }}
               exit={{ opacity: 0 }}
               transition={{ 
-                duration: 0.95, 
+                duration: 1.8, 
                 times: [0, 0.32, 0.65, 0.85, 1],
                 ease: 'easeInOut' 
               }}
               className="absolute inset-0"
             />
 
-            {/* Red Wave entering from Left */}
+            {/* Red Wave entering from Left across the screen */}
             <motion.div
-              initial={{ x: '-100%', opacity: 0.9 }}
-              animate={{ x: '100%', opacity: [0.9, 0.7, 0] }}
-              transition={{ duration: 0.7, ease: 'easeInOut' }}
-              className="absolute inset-0 bg-gradient-to-r from-[#FF0055] via-[#FF1E56] to-transparent w-full"
+              initial={{ x: '-100%', opacity: 0.85 }}
+              animate={{ x: '100%', opacity: [0.85, 0.6, 0] }}
+              transition={{ duration: 1.3, ease: 'easeInOut' }}
+              className="absolute inset-0 bg-gradient-to-r from-[#D90429] via-[#EF233C] to-transparent w-full"
             />
 
-            {/* Blue Wave entering from Right, colliding in center */}
+            {/* Blue Wave entering from Right, colliding slowly in center */}
             <motion.div
-              initial={{ x: '100%', opacity: 0.9 }}
-              animate={{ x: '-100%', opacity: [0.9, 0.7, 0] }}
-              transition={{ duration: 0.7, ease: 'easeInOut' }}
-              className="absolute inset-0 bg-gradient-to-l from-[#00D4FF] via-[#0096C7] to-transparent w-full"
+              initial={{ x: '100%', opacity: 0.85 }}
+              animate={{ x: '-100%', opacity: [0.85, 0.6, 0] }}
+              transition={{ duration: 1.3, ease: 'easeInOut' }}
+              className="absolute inset-0 bg-gradient-to-l from-[#0077B6] via-[#0096C7] to-transparent w-full"
             />
 
-            {/* Central Purple Bloom Shockwave ignited when Red & Blue collide */}
+            {/* Central Purple Bloom Shockwave ignited when Red & Blue collide and merge */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.2 }}
+              initial={{ opacity: 0, scale: 0.3 }}
               animate={{ 
                 opacity: [0, 0, 0.95, 0], 
-                scale: [0.2, 0.5, 1.4, 1.8] 
+                scale: [0.3, 0.6, 1.4, 2.0] 
               }}
               transition={{ 
-                duration: 0.95, 
-                times: [0, 0.35, 0.7, 1],
-                ease: 'easeOut' 
+                duration: 1.8, 
+                times: [0, 0.4, 0.75, 1],
+                ease: 'easeInOut' 
               }}
-              className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(199,120,221,0.95)_0%,_rgba(139,0,255,0.75)_45%,_transparent_75%)]"
+              className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(199,120,221,0.95)_0%,_rgba(114,9,183,0.75)_50%,_transparent_80%)]"
             />
           </div>
         )}
