@@ -154,10 +154,10 @@ export default function Loader({ onComplete, onSelectMode }: LoaderProps) {
       onSelectMode(mode);
     }
 
-    // Smooth, slow cinematic sequence (1.8s) so the Red ➔ Blue ➔ Purple metamorphosis is clearly experienced
+    // High-end 1200ms refined optical dissolution: clean, fast, elegant
     setTimeout(() => {
       if (onComplete) onComplete();
-    }, 1800);
+    }, 1200);
   };
 
   // Keyboard navigation: Left Arrow (Red), Right Arrow (Blue), Enter
@@ -215,82 +215,56 @@ export default function Loader({ onComplete, onSelectMode }: LoaderProps) {
       {/* 3. Faint phosphor green glow on page edges */}
       <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_80px_rgba(0,255,65,0.06)] z-[6]" />
 
-      {/* 4. Luxury Obsidian Aurora Metamorphosis: High-End Red ➔ Blue ➔ Purple Transition */}
+      {/* 4. High-End Optic Glass Dissolution (Vercel / Apple Design Grade) */}
       <AnimatePresence>
         {isFlashing && (
-          <div className="fixed inset-0 z-50 pointer-events-none overflow-hidden bg-[#0a0d12]">
-            {/* 1. Deep Obsidian Base Layer with Smooth Chromatic Shift */}
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-50 pointer-events-none overflow-hidden bg-[#10141a]"
+          >
+            {/* 1. Ultra-Smooth Radial Mesh Gradient: Red ➔ Blue ➔ Signature Obsidian Purple (#C778DD) */}
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.4 }}
-              className="absolute inset-0 bg-[#0d1017]"
-            />
-
-            {/* 2. Fluid Liquid Aurora Orbs - Red & Blue merging in center */}
-            {/* Left Crimson-Rose Nebula Orb */}
-            <motion.div
-              initial={{ x: '-40%', y: '-10%', scale: 0.8, opacity: 0 }}
+              initial={{ scale: 0.9, opacity: 0 }}
               animate={{ 
-                x: ['-40%', '5%', '20%'],
-                scale: [0.8, 1.3, 1.6],
-                opacity: [0, 0.9, 0.4, 0]
+                scale: [0.9, 1.05, 1.15],
+                opacity: [0, 0.95, 1],
+                background: [
+                  'radial-gradient(circle at 35% 50%, rgba(239, 35, 60, 0.75) 0%, rgba(16, 20, 26, 0.9) 65%)',
+                  'radial-gradient(circle at 65% 50%, rgba(0, 180, 216, 0.75) 0%, rgba(16, 20, 26, 0.9) 65%)',
+                  'radial-gradient(circle at 50% 50%, rgba(199, 120, 221, 0.85) 0%, rgba(16, 20, 26, 0.95) 75%)',
+                  'radial-gradient(circle at 50% 50%, rgba(199, 120, 221, 0.3) 0%, rgba(16, 20, 26, 1) 90%)'
+                ]
               }}
-              transition={{ duration: 1.8, times: [0, 0.4, 0.75, 1], ease: [0.22, 1, 0.36, 1] }}
-              className="absolute top-1/4 -left-1/4 w-[75vw] h-[75vw] max-w-[900px] max-h-[900px] rounded-full blur-[120px] bg-gradient-to-tr from-[#E63946] via-[#FF2A6D] to-[#9B5DE5] mix-blend-screen"
+              transition={{ 
+                duration: 1.2, 
+                times: [0, 0.35, 0.7, 1],
+                ease: [0.16, 1, 0.3, 1] 
+              }}
+              className="absolute inset-0"
             />
 
-            {/* Right Electric-Cyan Sapphire Orb */}
+            {/* 2. Glassmorphic Frosted Blur Veil: Dissolves background matrix & pill elements with optics */}
             <motion.div
-              initial={{ x: '40%', y: '10%', scale: 0.8, opacity: 0 }}
+              initial={{ backdropFilter: 'blur(0px)' }}
+              animate={{ backdropFilter: ['blur(0px)', 'blur(24px)', 'blur(40px)'] }}
+              transition={{ duration: 1.0, ease: 'easeInOut' }}
+              className="absolute inset-0"
+            />
+
+            {/* 3. Subtle Ambient Light Halo - Centered on Portfolio Theme Primary */}
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
               animate={{ 
-                x: ['40%', '-5%', '-20%'],
-                scale: [0.8, 1.3, 1.6],
-                opacity: [0, 0.9, 0.4, 0]
+                scale: [0.8, 1.2, 1.4],
+                opacity: [0, 0.45, 0.2]
               }}
-              transition={{ duration: 1.8, times: [0, 0.4, 0.75, 1], ease: [0.22, 1, 0.36, 1] }}
-              className="absolute bottom-1/4 -right-1/4 w-[75vw] h-[75vw] max-w-[900px] max-h-[900px] rounded-full blur-[120px] bg-gradient-to-bl from-[#00D4FF] via-[#0077B6] to-[#7928CA] mix-blend-screen"
+              transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+              className="absolute inset-0 m-auto w-[600px] h-[600px] rounded-full bg-[#C778DD]/25 blur-[100px] pointer-events-none"
             />
-
-            {/* Central Synthesis: Royal Purple Heart (#C778DD) expanding as Red & Blue unite */}
-            <motion.div
-              initial={{ scale: 0.4, opacity: 0 }}
-              animate={{ 
-                scale: [0.4, 0.8, 1.5, 2.2],
-                opacity: [0, 0.3, 0.95, 1]
-              }}
-              transition={{ duration: 1.8, times: [0, 0.35, 0.7, 1], ease: [0.16, 1, 0.3, 1] }}
-              className="absolute inset-0 m-auto w-[85vw] h-[85vw] max-w-[1000px] max-h-[1000px] rounded-full blur-[100px] bg-[radial-gradient(circle,_#C778DD_0%,_#9D4EDD_35%,_#5A189A_65%,_transparent_80%)] mix-blend-screen"
-            />
-
-            {/* 3. Horizontal Anamorphic Flare / Prismatic Lens Flare */}
-            <motion.div
-              initial={{ scaleX: 0, opacity: 0 }}
-              animate={{ 
-                scaleX: [0, 1.8, 0.8],
-                opacity: [0, 0.85, 0]
-              }}
-              transition={{ duration: 1.4, times: [0, 0.5, 1], ease: 'easeOut' }}
-              className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[2px] bg-gradient-to-r from-transparent via-white to-transparent shadow-[0_0_25px_4px_#C778DD]"
-            />
-
-            {/* 4. Fine Film Grain Texture Overlay for Analog Cinematic Luxury */}
-            <div 
-              className="absolute inset-0 opacity-[0.035] pointer-events-none mix-blend-overlay"
-              style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-                backgroundSize: '120px 120px'
-              }}
-            />
-
-            {/* 5. Final Elegant Vignette & Veil to match Obsidian Surface (#10141a) */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: [0, 0, 0.6, 1] }}
-              transition={{ duration: 1.8, times: [0, 0.6, 0.85, 1], ease: 'easeInOut' }}
-              className="absolute inset-0 bg-[#10141a]/60 shadow-[inset_0_0_120px_rgba(10,13,18,0.95)]"
-            />
-          </div>
+          </motion.div>
         )}
       </AnimatePresence>
 
