@@ -5,7 +5,21 @@ interface CursorBubbleProps {
   currentTheme?: string;
 }
 
+const THEME_DOT_COLORS: Record<string, string> = {
+  default: '#C778DD',
+  bauhaus: '#E63946',
+  cyberpunk: '#00F0FF',
+  matrix: '#00FF66',
+  synthwave: '#FF71CE',
+  tokyo: '#7AA2F7',
+  amber: '#FFB000',
+  urbane: '#D1FE22',
+  retro: '#fcb8b1',
+  bw: '#ffffff',
+};
+
 export default function CursorBubble({ currentTheme = "default" }: CursorBubbleProps) {
+  const dotColor = THEME_DOT_COLORS[currentTheme] || '#00FF66';
   const [isVisible, setIsVisible] = useState(false);
   const [isHoveringClickable, setIsHoveringClickable] = useState(false);
   const [isHoveringPill, setIsHoveringPill] = useState(false);
@@ -133,7 +147,7 @@ export default function CursorBubble({ currentTheme = "default" }: CursorBubbleP
       {/* 2. Precision Center Reticle Dot */}
       <motion.div
         aria-hidden="true"
-        className="pointer-events-none fixed top-0 left-0 z-[9995] rounded-full"
+        className="pointer-events-none fixed top-0 left-0 z-[9995] rounded-full transition-colors duration-300"
         style={{
           width: 4,
           height: 4,
@@ -141,8 +155,8 @@ export default function CursorBubble({ currentTheme = "default" }: CursorBubbleP
           y: mouseY,
           translateX: '-50%',
           translateY: '-50%',
-          backgroundColor: '#00ff41',
-          boxShadow: '0 0 6px #00ff41',
+          backgroundColor: dotColor,
+          boxShadow: `0 0 6px ${dotColor}`,
         }}
       />
     </>
