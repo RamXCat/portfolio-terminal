@@ -215,11 +215,11 @@ export default function Loader({ onComplete, onSelectMode }: LoaderProps) {
       {/* 3. Faint phosphor green glow on page edges */}
       <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_80px_rgba(0,255,65,0.06)] z-[6]" />
 
-      {/* 4. Cinematic Color Metamorphosis: Smooth & Slow Red ➔ Blue ➔ Purple Fusion */}
+      {/* 4. Cinematic Color Metamorphosis: Smooth & Slow Red ➔ Blue ➔ Default Obsidian Purple Fusion */}
       <AnimatePresence>
         {isFlashing && (
           <div className="fixed inset-0 z-50 pointer-events-none overflow-hidden">
-            {/* Chromatic Sweep: Pure Red morphing into Electric Blue, then into Royal Cyber Purple */}
+            {/* Chromatic Sweep: Pure Red morphing into Electric Blue, then into Default Obsidian Theme Purple */}
             <motion.div
               initial={{ 
                 opacity: 0, 
@@ -230,8 +230,8 @@ export default function Loader({ onComplete, onSelectMode }: LoaderProps) {
                 backgroundColor: [
                   '#E63946', // 1. Pure Crimson Red (0% - 30%)
                   '#00B4D8', // 2. Smoothly melts into Electric Cyan-Blue (30% - 60%)
-                  '#7209B7', // 3. Meets and fuses into deep Indigo-Purple (60% - 85%)
-                  '#C778DD'  // 4. Settles on signature Obsidian Purple (85% - 100%)
+                  '#B86BCE', // 3. Meets and fuses into Rich Violet-Purple (60% - 85%)
+                  '#C778DD'  // 4. Settles exactly on Default Theme Purple (#C778DD) (85% - 100%)
                 ] 
               }}
               exit={{ opacity: 0 }}
@@ -259,7 +259,7 @@ export default function Loader({ onComplete, onSelectMode }: LoaderProps) {
               className="absolute inset-0 bg-gradient-to-l from-[#0077B6] via-[#0096C7] to-transparent w-full"
             />
 
-            {/* Central Purple Bloom Shockwave ignited when Red & Blue collide and merge */}
+            {/* Central Purple Bloom Shockwave ignited when Red & Blue collide and merge into #C778DD */}
             <motion.div
               initial={{ opacity: 0, scale: 0.3 }}
               animate={{ 
@@ -271,7 +271,7 @@ export default function Loader({ onComplete, onSelectMode }: LoaderProps) {
                 times: [0, 0.4, 0.75, 1],
                 ease: 'easeInOut' 
               }}
-              className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(199,120,221,0.95)_0%,_rgba(114,9,183,0.75)_50%,_transparent_80%)]"
+              className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(199,120,221,0.95)_0%,_rgba(184,107,206,0.8)_45%,_rgba(16,20,26,0.6)_75%,_transparent_100%)]"
             />
           </div>
         )}
