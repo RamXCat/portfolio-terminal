@@ -92,18 +92,18 @@ export default function CursorBubble({ currentTheme = "default" }: CursorBubbleP
 
   if (!isVisible) return null;
 
-  // Enlarged sizing:
-  // Base: 130px (was 88px)
-  // When scrolling: 145px (fluid expansion reaction)
-  // Hovering clickable: 165px (was 124px)
-  // Clicking: 105px (firm haptic compression)
+  // Sleek compact sizing:
+  // Base: 44px
+  // When scrolling: 52px
+  // Hovering clickable: 64px
+  // Clicking: 36px
   const bubbleSize = isClicking 
-    ? 105 
+    ? 36 
     : isHoveringClickable 
-    ? 165 
+    ? 64 
     : isScrolling 
-    ? 145 
-    : 130;
+    ? 52 
+    : 44;
 
   return (
     <>
