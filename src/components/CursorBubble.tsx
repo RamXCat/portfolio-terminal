@@ -35,17 +35,17 @@ const CursorBubble = ({ currentTheme = "default", isExpandingToGame = false }: C
   const mouseX = useMotionValue(-150);
   const mouseY = useMotionValue(-150);
 
-  // 1. First: Circle (Fastest spring, leads the trail immediately)
-  const circleX = useSpring(mouseX, { damping: 25, stiffness: 600, mass: 0.3 });
-  const circleY = useSpring(mouseY, { damping: 25, stiffness: 600, mass: 0.3 });
+  // 1. First: Circle (Near instant, snappy pointer tracking)
+  const circleX = useSpring(mouseX, { damping: 30, stiffness: 1000, mass: 0.15 });
+  const circleY = useSpring(mouseY, { damping: 30, stiffness: 1000, mass: 0.15 });
 
-  // 2. Second: Ring (Moderate spring, smoothly trails behind circle)
-  const ringX = useSpring(mouseX, { damping: 26, stiffness: 220, mass: 0.7 });
-  const ringY = useSpring(mouseY, { damping: 26, stiffness: 220, mass: 0.7 });
+  // 2. Second: Ring (Fast & fluid trailing ring)
+  const ringX = useSpring(mouseX, { damping: 28, stiffness: 420, mass: 0.45 });
+  const ringY = useSpring(mouseY, { damping: 28, stiffness: 420, mass: 0.45 });
 
-  // 3. Third: Glow (Softest, highest inertia spring, trails furthest behind)
-  const glowX = useSpring(mouseX, { damping: 28, stiffness: 100, mass: 1.2 });
-  const glowY = useSpring(mouseY, { damping: 28, stiffness: 100, mass: 1.2 });
+  // 3. Third: Glow (Faster follow with elegant trailing aura)
+  const glowX = useSpring(mouseX, { damping: 30, stiffness: 220, mass: 0.75 });
+  const glowY = useSpring(mouseY, { damping: 30, stiffness: 220, mass: 0.75 });
 
   useEffect(() => {
     if (window.matchMedia('(pointer: coarse)').matches) {
