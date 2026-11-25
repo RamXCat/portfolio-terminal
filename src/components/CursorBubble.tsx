@@ -31,7 +31,6 @@ const CursorBubble = ({ currentTheme = "default", isExpandingToGame = false }: C
   const [isClicking, setIsClicking] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
-  const [isInChoiceScreen, setIsInChoiceScreen] = useState(false);
 
   // Raw mouse position motion values (instant)
   const mouseX = useMotionValue(-150);
