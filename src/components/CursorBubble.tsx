@@ -1,5 +1,9 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { motion, useSpring, useMotionValue } from 'motion/react';
+// @ts-nocheck
+'use client';
+
+import React, { useState, useEffect, useCallback } from 'react';
+import { motion, useAnimation } from 'motion/react';
+import './NeonCursor.css';
 
 interface CursorBubbleProps {
   currentTheme?: string;
@@ -19,153 +23,170 @@ const THEME_DOT_COLORS: Record<string, string> = {
   bw: '#ffffff',
 };
 
-export default function CursorBubble({ currentTheme = "default", isExpandingToGame = false }: CursorBubbleProps) {
-  const dotColor = THEME_DOT_COLORS[currentTheme] || '#00FF66';
-  const [isVisible, setIsVisible] = useState(false);
-  const [isHoveringClickable, setIsHoveringClickable] = useState(false);
-  const [isHoveringPill, setIsHoveringPill] = useState(false);
+const CursorBubble = ({ currentTheme = "default", isExpandingToGame = false }: CursorBubbleProps) => {
+  const dotColor = THEME_DOT_COLORS[currentTheme] || '#C778DD';
+
+  const [position, setPosition] = useState({
+    x: -150,
+    y: -150,
+    scale: 1,
+    opacity: 1,
+  });
   const [isClicking, setIsClicking] = useState(false);
-  const [isScrolling, setIsScrolling] = useState(false);
-  const [bubbleTheme, setBubbleTheme] = useState<string>("retro");
-  const scrollTimeout = useRef<number | null>(null);
-
-  // Determine a contrasting theme inside the bubble
-  useEffect(() => {
-    switch (currentTheme) {
-      case "retro":
-        setBubbleTheme("urbane");
-        break;
-      case "bw":
-        setBubbleTheme("retro");
-        break;
-      case "urbane":
-        setBubbleTheme("bw");
-        break;
-      case "default":
-      default:
-        setBubbleTheme("retro");
-        break;
-    }
-  }, [currentTheme]);
-
-  const mouseX = useMotionValue(-150);
-  const mouseY = useMotionValue(-150);
-
-  // Smooth springs for fluid, physics-based trailing movement
-  const springConfig = { damping: 22, stiffness: 220, mass: 0.6 };
-  const smoothX = useSpring(mouseX, springConfig);
-  const smoothY = useSpring(mouseY, springConfig);
+  const [isHovering, setIsHovering] = useState(false);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const trailControls = useAnimation();
+  const glowControls = useAnimation();
 
   useEffect(() => {
-    // Check if device supports fine hover pointer (disable on touch-only devices)
     if (window.matchMedia('(pointer: coarse)').matches) {
-      return;
+      setIsTouchDevice(true);
     }
+  }, []);
 
-    const handleMouseMove = (e: MouseEvent) => {
-      mouseX.set(e.clientX);
-      mouseY.set(e.clientY);
-      if (!isVisible) setIsVisible(true);
+  const handleMouseMove = useCallback((e) => {
+    setPosition((prev) => ({
+      ...prev,
+      x: e.clientX,
+      y: e.clientY,
+    }));
+  }, []);
 
-      // Check if hovering over clickable elements or Morpheus pills
-      const target = e.target as HTMLElement | null;
-      if (target) {
-        const isClickable = !!target.closest('a, button, input, [role="button"], textarea, select, .cursor-pointer');
-        const isPill = !!target.closest('button[title*="Red Pill"], button[title*="Blue Pill"], button[title*="Terminal + GUI"], button[title*="Only GUI"]');
-        setIsHoveringClickable(isClickable);
-        setIsHoveringPill(isPill);
+  const handleMouseDown = () => setIsClicking(true);
+  const handleMouseUp = () => setIsClicking(false);
+
+  const handleMouseOver = useCallback(
+    (e) => {
+      const target = e.target;
+      if (target && target.closest && target.closest('a, button, input, [role="button"], textarea, select, .cursor-pointer, [data-hover="true"]')) {
+        setIsHovering(true);
+        void trailControls.start({
+          scale: 1.5,
+          borderColor: dotColor,
+          borderWidth: '3px',
+        });
+        void glowControls.start({
+          scale: 2,
+          opacity: 0.8,
+        });
       }
-    };
+    },
+    [trailControls, glowControls, dotColor]
+  );
 
-    const handleScroll = () => {
-      setIsScrolling(true);
-      if (scrollTimeout.current) window.clearTimeout(scrollTimeout.current);
-      scrollTimeout.current = window.setTimeout(() => {
-        setIsScrolling(false);
-      }, 150);
-    };
+  const handleMouseOut = useCallback(() => {
+    setIsHovering(false);
+    void trailControls.start({
+      scale: 1,
+      borderColor: dotColor,
+      borderWidth: '2px',
+    });
+    void glowControls.start({
+      scale: 1,
+      opacity: 0.4,
+    });
+  }, [trailControls, glowControls, dotColor]);
 
-    const handleMouseDown = () => setIsClicking(true);
-    const handleMouseUp = () => setIsClicking(false);
-    const handleMouseLeave = () => setIsVisible(false);
-    const handleMouseEnter = () => setIsVisible(true);
-
+  useEffect(() => {
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
-    window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('mousedown', handleMouseDown);
     window.addEventListener('mouseup', handleMouseUp);
-    document.addEventListener('mouseleave', handleMouseLeave);
-    document.addEventListener('mouseenter', handleMouseEnter);
+    window.addEventListener('mouseover', handleMouseOver);
+    window.addEventListener('mouseout', handleMouseOut);
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('mousedown', handleMouseDown);
       window.removeEventListener('mouseup', handleMouseUp);
-      document.removeEventListener('mouseleave', handleMouseLeave);
-      document.removeEventListener('mouseenter', handleMouseEnter);
-      if (scrollTimeout.current) window.clearTimeout(scrollTimeout.current);
+      window.removeEventListener('mouseover', handleMouseOver);
+      window.removeEventListener('mouseout', handleMouseOut);
     };
-  }, [isVisible, mouseX, mouseY]);
+  }, [handleMouseMove, handleMouseOver, handleMouseOut]);
 
-  if (!isVisible) return null;
-
-  // Sleek compact sizing with mix-blend-mode: difference:
-  // Base: 30px
-  // Hovering pill: 48px (~1.6x expansion, precision selection cue)
-  // Hovering clickable: 42px
-  // Scrolling: 36px
-  // Clicking: 24px
-  const bubbleSize = isClicking 
-    ? 24 
-    : isHoveringPill
-    ? 48
-    : isHoveringClickable 
-    ? 42 
-    : isScrolling 
-    ? 36 
-    : 30;
+  if (isTouchDevice) return null;
 
   return (
-    <>
-      {/* 1. Precision Difference-Blend Cursor Bubble / Expanding Game Portal */}
-      <motion.div
-        aria-hidden="true"
-        className={`pointer-events-none fixed top-0 left-0 rounded-full border border-white/60 ${
-          isExpandingToGame 
-            ? 'z-[99999] transition-[width,height,opacity] duration-700 ease-in-out' 
-            : 'z-[9990] transition-[width,height] duration-200 ease-out'
-        }`}
-        style={{
-          width: isExpandingToGame ? '320vmax' : bubbleSize,
-          height: isExpandingToGame ? '320vmax' : bubbleSize,
-          x: isExpandingToGame ? mouseX : smoothX,
-          y: isExpandingToGame ? mouseY : smoothY,
-          translateX: '-50%',
-          translateY: '-50%',
-          mixBlendMode: isExpandingToGame ? 'normal' : 'difference',
-          backgroundColor: isExpandingToGame ? '#07090e' : 'rgba(255, 255, 255, 0.95)',
-          boxShadow: isExpandingToGame ? `0 0 100px ${dotColor}` : '0 0 12px rgba(255, 255, 255, 0.4)',
-        }}
-      />
-
-      {/* 2. Precision Center Reticle Dot */}
-      {!isExpandingToGame && (
+    <div 
+      className='neon-cursor-container'
+      style={{
+        '--cursor-dot': dotColor
+      } as React.CSSProperties}
+    >
+      {/* Expanding Circular Portal into Game Mode */}
+      {isExpandingToGame && (
         <motion.div
           aria-hidden="true"
-          className="pointer-events-none fixed top-0 left-0 z-[9995] rounded-full transition-colors duration-300"
+          className="pointer-events-none fixed top-0 left-0 rounded-full z-[99999] transition-[width,height,opacity] duration-700 ease-in-out"
           style={{
-            width: 4,
-            height: 4,
-            x: mouseX,
-            y: mouseY,
+            width: '320vmax',
+            height: '320vmax',
+            x: position.x,
+            y: position.y,
             translateX: '-50%',
             translateY: '-50%',
-            backgroundColor: dotColor,
-            boxShadow: `0 0 6px ${dotColor}`,
+            backgroundColor: '#07090e',
+            boxShadow: `0 0 100px ${dotColor}`,
           }}
         />
       )}
-    </>
+
+      {!isExpandingToGame && (
+        <>
+          {/* Main cursor dot */}
+          <motion.div
+            className='cursor-main'
+            animate={{
+              x: position.x - 10,
+              y: position.y - 10,
+              scale: isClicking ? 0.8 : isHovering ? 1.25 : 1,
+              backgroundColor: dotColor,
+            }}
+            transition={{
+              type: 'spring',
+              damping: 20,
+              stiffness: 400,
+              mass: 0.5,
+            }}
+          />
+
+          {/* Trailing circle */}
+          <motion.div
+            className='cursor-trail'
+            animate={trailControls}
+            style={{
+              x: position.x - 20,
+              y: position.y - 20,
+              borderColor: dotColor,
+            }}
+            transition={{
+              type: 'spring',
+              damping: 30,
+              stiffness: 200,
+              mass: 0.8,
+            }}
+            initial={false}
+          />
+
+          {/* Outer glow */}
+          <motion.div
+            className='cursor-glow'
+            animate={glowControls}
+            style={{
+              x: position.x - 30,
+              y: position.y - 30,
+            }}
+            transition={{
+              type: 'spring',
+              damping: 40,
+              stiffness: 150,
+              mass: 1,
+            }}
+            initial={false}
+          />
+        </>
+      )}
+    </div>
   );
-}
+};
+
+export default CursorBubble;

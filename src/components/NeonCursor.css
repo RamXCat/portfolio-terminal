@@ -1,0 +1,47 @@
+.neon-cursor-container {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+.cursor-main {
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 9999px;
+  background-color: var(--cursor-dot, #C778DD);
+  box-shadow: 0 0 15px var(--cursor-dot, #C778DD), inset 0 0 4px rgba(255, 255, 255, 0.8);
+  z-index: 9999;
+}
+
+.cursor-trail {
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  border: 2px solid var(--cursor-dot, #C778DD);
+  box-shadow: 0 0 20px var(--cursor-dot, #C778DD), inset 0 0 10px var(--cursor-dot, #C778DD);
+  z-index: 9998;
+}
+
+.cursor-glow {
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 60px;
+  height: 60px;
+  border-radius: 9999px;
+  background: radial-gradient(circle, var(--cursor-dot, #C778DD) 0%, transparent 70%);
+  opacity: 0.45;
+  filter: blur(8px);
+  z-index: 9997;
+}
