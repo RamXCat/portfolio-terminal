@@ -24,12 +24,14 @@ const THEME_DOT_COLORS: Record<string, string> = {
 };
 
 const CursorBubble = ({ currentTheme = "default", isExpandingToGame = false }: CursorBubbleProps) => {
-  const dotColor = THEME_DOT_COLORS[currentTheme] || '#C778DD';
+  const [isInChoiceScreen, setIsInChoiceScreen] = useState(false);
+  const dotColor = isInChoiceScreen ? '#00FF41' : (THEME_DOT_COLORS[currentTheme] || '#C778DD');
 
   const [isVisible, setIsVisible] = useState(false);
   const [isClicking, setIsClicking] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const [isInChoiceScreen, setIsInChoiceScreen] = useState(false);
 
   // Raw mouse position motion values (instant)
   const mouseX = useMotionValue(-150);
@@ -51,6 +53,20 @@ const CursorBubble = ({ currentTheme = "default", isExpandingToGame = false }: C
     if (window.matchMedia('(pointer: coarse)').matches) {
       setIsTouchDevice(true);
     }
+  }, []);
+
+  useEffect(() => {
+    // Detect whether the user is on the Matrix Pill Choice screen
+    const checkChoiceScreen = () => {
+      const choiceScreenEl = document.querySelector('[data-matrix-choice="true"]');
+      setIsInChoiceScreen(!!choiceScreenEl);
+    };
+
+    checkChoiceScreen();
+    const observer = new MutationObserver(checkChoiceScreen);
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    return () => observer.disconnect();
   }, []);
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
