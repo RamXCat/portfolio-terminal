@@ -1704,105 +1704,191 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
       {/* Interactive Physics Canvas */}
       <canvas ref={canvasRef} className="w-full h-full pointer-events-auto cursor-crosshair" />
 
-      {/* DOMolition Tactical Weapon Selector & HUD Header (Fully responsive on mobile & desktop) */}
-      <div className="game-hud-control fixed top-2 sm:top-4 left-1/2 -translate-x-1/2 flex items-center gap-2 sm:gap-4 px-3 sm:px-6 py-1.5 sm:py-2.5 bg-[#090b0e]/95 backdrop-blur-2xl border border-primary/40 shadow-[0_0_40px_rgba(199,120,221,0.35)] rounded-2xl text-white pointer-events-auto max-w-[calc(100vw-1rem)] overflow-x-auto">
-        
-        {/* DOMolition Title & Destruction Progress Meter */}
-        <div className="flex flex-col gap-0.5 sm:gap-1 min-w-[90px] sm:min-w-[130px] shrink-0">
-          <div className="flex items-center gap-1.5 sm:gap-2 font-mono text-[10px] sm:text-[11px] font-bold tracking-widest text-primary">
-            <ShieldAlert className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary animate-pulse" />
-            <span>DOMOLITION</span>
+      {/* DOMolition Tactical Weapon Selector & Accessible HUD Header */}
+      <div
+        role="region"
+        aria-label="Game controls"
+        className="game-hud-control pointer-events-auto fixed left-1/2 top-2 sm:top-4 z-50 -translate-x-1/2
+                   flex max-w-[calc(100vw-1rem)] items-center gap-3 sm:gap-5 overflow-x-auto
+                   rounded-xl border border-white/15 bg-[#0b0d11]/90 px-3 sm:px-5 py-2 text-white backdrop-blur-md"
+      >
+        {/* Progress */}
+        <div className="min-w-[96px] sm:min-w-[140px] shrink-0">
+          <div className="flex items-baseline justify-between gap-2 text-xs sm:text-sm">
+            <span id="hud-progress-label" className="font-semibold">Domolition</span>
+            <span id="hud-progress-text" className="tabular-nums text-white/70">{destroyedPercent}%</span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="h-1.5 flex-grow bg-surface-container-highest rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-gradient-to-r from-primary to-[#FF2A85] transition-all duration-300"
-                style={{ width: `${destroyedPercent}%` }}
-              />
-            </div>
-            <span className="font-mono text-[9px] sm:text-[10px] text-tertiary">{destroyedPercent}%</span>
-          </div>
-        </div>
-
-        <div className="h-6 sm:h-8 w-px bg-white/15 shrink-0"></div>
-
-        {/* Weapons Arsenal Selector (1-5) */}
-        <div className="hidden sm:flex items-center gap-1.5 shrink-0">
-          {(Object.keys(WEAPONS) as WeaponType[]).map((wpKey) => {
-            const wp = WEAPONS[wpKey];
-            const isSelected = currentWeapon === wpKey;
-            return (
-              <button
-                key={wpKey}
-                onClick={() => setCurrentWeapon(wpKey)}
-                title={`${wp.name} (Press ${wp.key})`}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border font-mono text-xs transition-all cursor-pointer ${
-                  isSelected 
-                    ? 'bg-primary/20 border-primary text-white shadow-[0_0_15px_rgba(199,120,221,0.5)] scale-105' 
-                    : 'bg-surface-container-low border-outline-variant/30 text-tertiary hover:border-primary/50'
-                }`}
-              >
-                <span className="text-sm">{wp.icon}</span>
-                <span className="hidden sm:inline font-bold">{wp.name}</span>
-                <span className="text-[10px] opacity-60 font-mono bg-black/40 px-1 rounded">[{wp.key}]</span>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Current Active Weapon indicator on mobile */}
-        <div className="flex sm:hidden items-center gap-1.5 px-2 py-1 bg-primary/20 border border-primary/40 rounded-lg font-mono text-[11px] shrink-0">
-          <span>{WEAPONS[currentWeapon].icon}</span>
-          <span className="font-bold text-white text-[10px]">{WEAPONS[currentWeapon].name.split(' ')[0]}</span>
-        </div>
-
-        <div className="h-6 sm:h-8 w-px bg-white/15 shrink-0"></div>
-
-        {/* Dedicated Score & Wrecked Telemetry Mini-Box */}
-        <div className="flex items-center gap-2.5 sm:gap-3.5 px-2.5 sm:px-3.5 py-1 bg-[#05070a]/90 border border-primary/40 rounded-xl shadow-[inset_0_0_12px_rgba(0,0,0,0.6),0_0_15px_rgba(199,120,221,0.2)] font-mono shrink-0">
-          <div className="text-center">
-            <span className="text-tertiary/80 text-[8px] sm:text-[9px] uppercase tracking-wider block font-bold leading-none mb-0.5">WRECKED</span>
-            <span className="text-[#FF2A85] font-extrabold text-xs sm:text-sm leading-none">{destroyedCount}</span>
-          </div>
-          <div className="w-px h-5 sm:h-6 bg-white/20"></div>
-          <div className="text-center min-w-[42px] sm:min-w-[50px]">
-            <span className="text-tertiary/80 text-[8px] sm:text-[9px] uppercase tracking-wider block font-bold leading-none mb-0.5">SCORE</span>
-            <span className="text-[#00F0FF] font-extrabold text-xs sm:text-sm leading-none">{score}</span>
+          <div
+            role="progressbar"
+            aria-labelledby="hud-progress-label"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={destroyedPercent}
+            aria-valuetext={`${destroyedPercent} percent destroyed`}
+            className="mt-1 h-1.5 overflow-hidden rounded-full bg-white/15"
+          >
+            <div 
+              id="hud-progress-bar" 
+              className="h-full bg-primary motion-safe:transition-[width] motion-safe:duration-300"
+              style={{ width: `${destroyedPercent}%` }}
+            />
           </div>
         </div>
 
-        <div className="h-6 sm:h-8 w-px bg-white/15 shrink-0"></div>
-
-        {/* Reset & Exit Actions */}
-        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-          {/* Sound Mute/Unmute Toggle Button */}
-          <button
-            onClick={toggleMute}
-            title={isMuted ? "Unmute Audio (M)" : "Mute Audio (M)"}
-            className={`p-1.5 border rounded-lg transition-all cursor-pointer ${
-              isMuted 
-                ? 'bg-red-500/20 border-red-500/40 text-red-400 hover:bg-red-500 hover:text-white' 
-                : 'bg-surface-container-high border-outline-variant/30 text-primary hover:border-primary hover:bg-primary/20'
+        {/* Weapons: buttons on desktop */}
+        <div role="toolbar" aria-label="Weapons" className="hidden sm:flex shrink-0 items-center gap-1">
+          <button 
+            type="button" 
+            aria-pressed={currentWeapon === 'RIFLE'} 
+            aria-keyshortcuts="1"
+            onClick={() => setCurrentWeapon('RIFLE')}
+            className={`min-h-[40px] rounded-lg px-3 text-sm font-medium transition-all cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+              currentWeapon === 'RIFLE' 
+                ? 'bg-white/15 text-white' 
+                : 'text-white/70 hover:bg-white/10 hover:text-white'
             }`}
           >
-            {isMuted ? <VolumeX className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <Volume2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
+            Assault rifle <span aria-hidden="true" className="ml-1 text-xs text-white/60">1</span>
+          </button>
+          <button 
+            type="button" 
+            aria-pressed={currentWeapon === 'SHOTGUN'} 
+            aria-keyshortcuts="2"
+            onClick={() => setCurrentWeapon('SHOTGUN')}
+            className={`min-h-[40px] rounded-lg px-3 text-sm font-medium transition-all cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+              currentWeapon === 'SHOTGUN' 
+                ? 'bg-white/15 text-white' 
+                : 'text-white/70 hover:bg-white/10 hover:text-white'
+            }`}
+          >
+            Shotgun <span aria-hidden="true" className="ml-1 text-xs text-white/60">2</span>
+          </button>
+          <button 
+            type="button" 
+            aria-pressed={currentWeapon === 'ROCKET'} 
+            aria-keyshortcuts="3"
+            onClick={() => setCurrentWeapon('ROCKET')}
+            className={`min-h-[40px] rounded-lg px-3 text-sm font-medium transition-all cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+              currentWeapon === 'ROCKET' 
+                ? 'bg-white/15 text-white' 
+                : 'text-white/70 hover:bg-white/10 hover:text-white'
+            }`}
+          >
+            Incendiary RPG <span aria-hidden="true" className="ml-1 text-xs text-white/60">3</span>
+          </button>
+          <button 
+            type="button" 
+            aria-pressed={currentWeapon === 'LASER'} 
+            aria-keyshortcuts="4"
+            onClick={() => setCurrentWeapon('LASER')}
+            className={`min-h-[40px] rounded-lg px-3 text-sm font-medium transition-all cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+              currentWeapon === 'LASER' 
+                ? 'bg-white/15 text-white' 
+                : 'text-white/70 hover:bg-white/10 hover:text-white'
+            }`}
+          >
+            Flamethrower <span aria-hidden="true" className="ml-1 text-xs text-white/60">4</span>
+          </button>
+          <button 
+            type="button" 
+            aria-pressed={currentWeapon === 'NUKE'} 
+            aria-keyshortcuts="5"
+            onClick={() => setCurrentWeapon('NUKE')}
+            className={`min-h-[40px] rounded-lg px-3 text-sm font-medium transition-all cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+              currentWeapon === 'NUKE' 
+                ? 'bg-white/15 text-white' 
+                : 'text-white/70 hover:bg-white/10 hover:text-white'
+            }`}
+          >
+            Hellfire strike <span aria-hidden="true" className="ml-1 text-xs text-white/60">5</span>
+          </button>
+        </div>
+
+        {/* Weapons: native select on mobile (large tap target, built-in accessibility) */}
+        <div className="sm:hidden shrink-0">
+          <label htmlFor="hud-weapon" className="sr-only">Weapon</label>
+          <select 
+            id="hud-weapon"
+            value={currentWeapon}
+            onChange={(e) => setCurrentWeapon(e.target.value as WeaponType)}
+            className="min-h-[44px] rounded-lg border border-white/20 bg-[#0b0d11] px-2 text-sm text-white
+                       focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          >
+            <option value="RIFLE">Assault rifle</option>
+            <option value="SHOTGUN">Shotgun</option>
+            <option value="ROCKET">Incendiary RPG</option>
+            <option value="LASER">Flamethrower</option>
+            <option value="NUKE">Hellfire strike</option>
+          </select>
+        </div>
+
+        {/* Stats (announced politely, not on every tick: update the text sparingly) */}
+        <dl className="flex shrink-0 items-center gap-4 text-center tabular-nums" aria-live="off">
+          <div>
+            <dt className="text-xs text-white/70">Wrecked</dt>
+            <dd id="hud-wrecked" className="text-sm font-bold text-white">{destroyedCount}</dd>
+          </div>
+          <div>
+            <dt className="text-xs text-white/70">Score</dt>
+            <dd id="hud-score" className="text-sm font-bold text-white">{score}</dd>
+          </div>
+        </dl>
+
+        {/* Actions */}
+        <div className="flex shrink-0 items-center gap-1">
+          <button 
+            type="button" 
+            id="hud-mute" 
+            aria-pressed={isMuted} 
+            aria-label={isMuted ? 'Unmute audio' : 'Mute audio'} 
+            aria-keyshortcuts="M"
+            onClick={toggleMute}
+            className="grid h-11 w-11 sm:h-10 sm:w-10 place-items-center rounded-lg text-white/80 hover:bg-white/10 hover:text-white
+                       focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer"
+          >
+            {isMuted ? (
+              <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"/>
+                <line x1="22" y1="2" x2="2" y2="22"/>
+              </svg>
+            ) : (
+              <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"/>
+                <path d="M16 9a5 5 0 0 1 0 6"/>
+              </svg>
+            )}
           </button>
 
-          <button
+          <button 
+            type="button" 
+            id="hud-reset" 
+            aria-label="Reset" 
+            aria-keyshortcuts="R"
             onClick={restoreElements}
-            title="Restore Website Elements (R)"
-            className="flex items-center gap-1 px-2 sm:px-3 py-1.5 bg-surface-container-high border border-outline-variant/30 hover:border-primary text-xs font-mono rounded-lg hover:bg-primary/20 transition-all text-on-surface cursor-pointer"
+            className="grid h-11 w-11 sm:h-10 sm:w-10 place-items-center rounded-lg text-white/80 hover:bg-white/10 hover:text-white
+                       focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer"
           >
-            <RotateCcw className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Reset</span> <span className="opacity-60 hidden sm:inline">[R]</span>
+            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>
+            </svg>
           </button>
 
-          <button
+          <button 
+            type="button" 
+            id="hud-exit" 
+            aria-label="Exit game" 
+            aria-keyshortcuts="Escape"
             onClick={onClose}
-            title="Exit Game (ESC)"
-            className="p-1.5 bg-red-500/20 border border-red-500/40 text-red-400 hover:bg-red-500 hover:text-white rounded-lg transition-all cursor-pointer"
+            className="grid h-11 w-11 sm:h-10 sm:w-10 place-items-center rounded-lg text-red-300 hover:bg-red-500 hover:text-white
+                       focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-300 cursor-pointer"
           >
-            <X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+            </svg>
           </button>
         </div>
       </div>
