@@ -1704,194 +1704,153 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
       {/* Interactive Physics Canvas */}
       <canvas ref={canvasRef} className="w-full h-full pointer-events-auto cursor-crosshair" />
 
-      {/* DOMolition Tactical Weapon Selector & Accessible HUD Header */}
-      <div
+      {/* Redesigned Minimal & Accessible Game HUD: Two floating corner halves on desktop, stacked on mobile */}
+      <header
         role="region"
         aria-label="Game controls"
-        className="game-hud-control pointer-events-auto fixed left-1/2 top-2 sm:top-4 z-50 -translate-x-1/2
-                   flex max-w-[calc(100vw-1rem)] items-center gap-3 sm:gap-5 overflow-x-auto
-                   rounded-xl border border-white/15 bg-[#0b0d11]/90 px-3 sm:px-5 py-2 text-white backdrop-blur-md"
+        className="game-hud-control pointer-events-none fixed inset-x-0 top-0 z-50 p-2 sm:p-4 flex flex-col sm:flex-row items-center sm:items-start justify-between gap-2"
       >
-        {/* Progress */}
-        <div className="min-w-[96px] sm:min-w-[140px] shrink-0">
-          <div className="flex items-baseline justify-between gap-2 text-xs sm:text-sm">
-            <span id="hud-progress-label" className="font-semibold">Domolition</span>
-            <span id="hud-progress-text" className="tabular-nums text-white/70">{destroyedPercent}%</span>
+        {/* LEFT HALF (top-left): Progress & Weapons */}
+        <div className="pointer-events-auto flex items-center gap-2 sm:gap-4 rounded-xl border border-white/10 bg-[#0b0d11]/90 px-3 sm:px-4 py-1.5 sm:py-2 text-white backdrop-blur-md shadow-lg max-w-full">
+          {/* Progress: "Domolition" label, percentage, and 4px progress bar */}
+          <div className="min-w-[85px] sm:min-w-[120px] shrink-0">
+            <div className="flex items-baseline justify-between gap-1.5 text-xs">
+              <span id="hud-progress-label" className="font-semibold text-white/90">Domolition</span>
+              <span id="hud-progress-text" className="tabular-nums text-white/70">{destroyedPercent}%</span>
+            </div>
+            <div
+              role="progressbar"
+              aria-labelledby="hud-progress-label"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={destroyedPercent}
+              aria-valuetext={`${destroyedPercent} percent destroyed`}
+              className="mt-1 h-1 w-full overflow-hidden rounded-full bg-white/15"
+            >
+              <div 
+                id="hud-progress-bar" 
+                className="h-full bg-primary motion-safe:transition-[width] motion-safe:duration-300"
+                style={{ width: `${destroyedPercent}%` }}
+              />
+            </div>
           </div>
-          <div
-            role="progressbar"
-            aria-labelledby="hud-progress-label"
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-valuenow={destroyedPercent}
-            aria-valuetext={`${destroyedPercent} percent destroyed`}
-            className="mt-1 h-1.5 overflow-hidden rounded-full bg-white/15"
-          >
-            <div 
-              id="hud-progress-bar" 
-              className="h-full bg-primary motion-safe:transition-[width] motion-safe:duration-300"
-              style={{ width: `${destroyedPercent}%` }}
-            />
+
+          <div className="h-5 sm:h-6 w-px bg-white/10 shrink-0" aria-hidden="true" />
+
+          {/* Weapons Switcher: 5 compact buttons 1-5 with expanding active label */}
+          <div role="toolbar" aria-label="Weapons" className="flex shrink-0 items-center gap-1">
+            {(Object.keys(WEAPONS) as WeaponType[]).map((wpKey) => {
+              const wp = WEAPONS[wpKey];
+              const isSelected = currentWeapon === wpKey;
+              return (
+                <button
+                  key={wpKey}
+                  type="button"
+                  role="button"
+                  aria-pressed={isSelected}
+                  aria-label={wp.name}
+                  aria-keyshortcuts={wp.key}
+                  title={`${wp.name} [${wp.key}]`}
+                  onClick={() => setCurrentWeapon(wpKey)}
+                  className={`min-h-[40px] sm:min-h-[36px] flex items-center justify-center gap-1.5 rounded-lg px-2 sm:px-2.5 text-xs sm:text-sm font-medium transition-colors cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+                    isSelected
+                      ? 'bg-white/15 text-white'
+                      : 'text-white/70 hover:bg-white/10 hover:text-white'
+                  }`}
+                >
+                  <span className="font-bold">{wp.key}</span>
+                  {isSelected && (
+                    <span className="hidden sm:inline text-xs font-normal text-white/90 whitespace-nowrap">
+                      {wp.name}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        {/* Weapons: buttons on desktop */}
-        <div role="toolbar" aria-label="Weapons" className="hidden sm:flex shrink-0 items-center gap-1">
-          <button 
-            type="button" 
-            aria-pressed={currentWeapon === 'RIFLE'} 
-            aria-keyshortcuts="1"
-            onClick={() => setCurrentWeapon('RIFLE')}
-            className={`min-h-[40px] rounded-lg px-3 text-sm font-medium transition-all cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
-              currentWeapon === 'RIFLE' 
-                ? 'bg-white/15 text-white' 
-                : 'text-white/70 hover:bg-white/10 hover:text-white'
-            }`}
-          >
-            Assault rifle <span aria-hidden="true" className="ml-1 text-xs text-white/60">1</span>
-          </button>
-          <button 
-            type="button" 
-            aria-pressed={currentWeapon === 'SHOTGUN'} 
-            aria-keyshortcuts="2"
-            onClick={() => setCurrentWeapon('SHOTGUN')}
-            className={`min-h-[40px] rounded-lg px-3 text-sm font-medium transition-all cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
-              currentWeapon === 'SHOTGUN' 
-                ? 'bg-white/15 text-white' 
-                : 'text-white/70 hover:bg-white/10 hover:text-white'
-            }`}
-          >
-            Shotgun <span aria-hidden="true" className="ml-1 text-xs text-white/60">2</span>
-          </button>
-          <button 
-            type="button" 
-            aria-pressed={currentWeapon === 'ROCKET'} 
-            aria-keyshortcuts="3"
-            onClick={() => setCurrentWeapon('ROCKET')}
-            className={`min-h-[40px] rounded-lg px-3 text-sm font-medium transition-all cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
-              currentWeapon === 'ROCKET' 
-                ? 'bg-white/15 text-white' 
-                : 'text-white/70 hover:bg-white/10 hover:text-white'
-            }`}
-          >
-            Incendiary RPG <span aria-hidden="true" className="ml-1 text-xs text-white/60">3</span>
-          </button>
-          <button 
-            type="button" 
-            aria-pressed={currentWeapon === 'LASER'} 
-            aria-keyshortcuts="4"
-            onClick={() => setCurrentWeapon('LASER')}
-            className={`min-h-[40px] rounded-lg px-3 text-sm font-medium transition-all cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
-              currentWeapon === 'LASER' 
-                ? 'bg-white/15 text-white' 
-                : 'text-white/70 hover:bg-white/10 hover:text-white'
-            }`}
-          >
-            Flamethrower <span aria-hidden="true" className="ml-1 text-xs text-white/60">4</span>
-          </button>
-          <button 
-            type="button" 
-            aria-pressed={currentWeapon === 'NUKE'} 
-            aria-keyshortcuts="5"
-            onClick={() => setCurrentWeapon('NUKE')}
-            className={`min-h-[40px] rounded-lg px-3 text-sm font-medium transition-all cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
-              currentWeapon === 'NUKE' 
-                ? 'bg-white/15 text-white' 
-                : 'text-white/70 hover:bg-white/10 hover:text-white'
-            }`}
-          >
-            Hellfire strike <span aria-hidden="true" className="ml-1 text-xs text-white/60">5</span>
-          </button>
-        </div>
+        {/* RIGHT HALF (top-right): Stats & Actions */}
+        <div className="pointer-events-auto flex items-center gap-2 sm:gap-3 rounded-xl border border-white/10 bg-[#0b0d11]/90 px-3 sm:px-4 py-1.5 sm:py-2 text-white backdrop-blur-md shadow-lg max-w-full">
+          {/* Stats: Wrecked and Score with tabular-nums and stable min-width */}
+          <dl className="flex shrink-0 items-center gap-3 sm:gap-4 text-center tabular-nums" aria-live="off">
+            <div className="min-w-[44px]">
+              <dt className="text-xs text-white/60">Wrecked</dt>
+              <dd id="hud-wrecked" className="text-xs sm:text-sm font-semibold text-white">
+                {destroyedCount.toLocaleString()}
+              </dd>
+            </div>
+            <div className="min-w-[56px] sm:min-w-[64px]">
+              <dt className="text-xs text-white/60">Score</dt>
+              <dd id="hud-score" className="text-xs sm:text-sm font-semibold text-white">
+                {score.toLocaleString()}
+              </dd>
+            </div>
+          </dl>
 
-        {/* Weapons: native select on mobile (large tap target, built-in accessibility) */}
-        <div className="sm:hidden shrink-0">
-          <label htmlFor="hud-weapon" className="sr-only">Weapon</label>
-          <select 
-            id="hud-weapon"
-            value={currentWeapon}
-            onChange={(e) => setCurrentWeapon(e.target.value as WeaponType)}
-            className="min-h-[44px] rounded-lg border border-white/20 bg-[#0b0d11] px-2 text-sm text-white
-                       focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-          >
-            <option value="RIFLE">Assault rifle</option>
-            <option value="SHOTGUN">Shotgun</option>
-            <option value="ROCKET">Incendiary RPG</option>
-            <option value="LASER">Flamethrower</option>
-            <option value="NUKE">Hellfire strike</option>
-          </select>
-        </div>
+          <div className="h-5 sm:h-6 w-px bg-white/10 shrink-0" aria-hidden="true" />
 
-        {/* Stats (announced politely, not on every tick: update the text sparingly) */}
-        <dl className="flex shrink-0 items-center gap-4 text-center tabular-nums" aria-live="off">
-          <div>
-            <dt className="text-xs text-white/70">Wrecked</dt>
-            <dd id="hud-wrecked" className="text-sm font-bold text-white">{destroyedCount}</dd>
-          </div>
-          <div>
-            <dt className="text-xs text-white/70">Score</dt>
-            <dd id="hud-score" className="text-sm font-bold text-white">{score}</dd>
-          </div>
-        </dl>
+          {/* Action Buttons: Sound, Reset, Exit */}
+          <div className="flex shrink-0 items-center gap-1">
+            <button
+              type="button"
+              id="hud-mute"
+              aria-pressed={isMuted}
+              aria-label={isMuted ? 'Unmute audio' : 'Mute audio'}
+              aria-keyshortcuts="M"
+              title={isMuted ? 'Unmute audio [M]' : 'Mute audio [M]'}
+              onClick={toggleMute}
+              className={`grid h-10 w-10 sm:h-9 sm:w-9 place-items-center rounded-lg transition-colors cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+                isMuted ? 'bg-white/15 text-white' : 'text-white/80 hover:bg-white/10 hover:text-white'
+              }`}
+            >
+              {isMuted ? (
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"/>
+                  <line x1="22" y1="2" x2="2" y2="22"/>
+                </svg>
+              ) : (
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"/>
+                  <path d="M16 9a5 5 0 0 1 0 6"/>
+                </svg>
+              )}
+            </button>
 
-        {/* Actions */}
-        <div className="flex shrink-0 items-center gap-1">
-          <button 
-            type="button" 
-            id="hud-mute" 
-            aria-pressed={isMuted} 
-            aria-label={isMuted ? 'Unmute audio' : 'Mute audio'} 
-            aria-keyshortcuts="M"
-            onClick={toggleMute}
-            className="grid h-11 w-11 sm:h-10 sm:w-10 place-items-center rounded-lg text-white/80 hover:bg-white/10 hover:text-white
-                       focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer"
-          >
-            {isMuted ? (
-              <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            <button
+              type="button"
+              id="hud-reset"
+              aria-label="Reset game elements"
+              aria-keyshortcuts="R"
+              title="Reset game elements [R]"
+              onClick={restoreElements}
+              className="grid h-10 w-10 sm:h-9 sm:w-9 place-items-center rounded-lg text-white/80 hover:bg-white/10 hover:text-white transition-colors cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            >
+              <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
                    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"/>
-                <line x1="22" y1="2" x2="2" y2="22"/>
+                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>
               </svg>
-            ) : (
-              <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            </button>
+
+            <button
+              type="button"
+              id="hud-exit"
+              aria-label="Exit game"
+              aria-keyshortcuts="Escape"
+              title="Exit game [Esc]"
+              onClick={onClose}
+              className="grid h-10 w-10 sm:h-9 sm:w-9 place-items-center rounded-lg text-red-400 hover:bg-red-500/20 hover:text-red-300 transition-colors cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-400"
+            >
+              <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
                    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"/>
-                <path d="M16 9a5 5 0 0 1 0 6"/>
+                <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
               </svg>
-            )}
-          </button>
-
-          <button 
-            type="button" 
-            id="hud-reset" 
-            aria-label="Reset" 
-            aria-keyshortcuts="R"
-            onClick={restoreElements}
-            className="grid h-11 w-11 sm:h-10 sm:w-10 place-items-center rounded-lg text-white/80 hover:bg-white/10 hover:text-white
-                       focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer"
-          >
-            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                 stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>
-            </svg>
-          </button>
-
-          <button 
-            type="button" 
-            id="hud-exit" 
-            aria-label="Exit game" 
-            aria-keyshortcuts="Escape"
-            onClick={onClose}
-            className="grid h-11 w-11 sm:h-10 sm:w-10 place-items-center rounded-lg text-red-300 hover:bg-red-500 hover:text-white
-                       focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-300 cursor-pointer"
-          >
-            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                 stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
-            </svg>
-          </button>
+            </button>
+          </div>
         </div>
-      </div>
+      </header>
 
       {/* Jetpack Fuel Gauge & Controls HUD (Bottom Left on Desktop Non-Touch Screens) */}
       {!isTouchDevice && (
