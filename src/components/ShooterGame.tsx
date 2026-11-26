@@ -1708,12 +1708,12 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
       <header
         role="region"
         aria-label="Game controls"
-        className="game-hud-control pointer-events-none fixed inset-x-0 top-0 z-50 p-2 sm:p-4 flex flex-col sm:flex-row items-center sm:items-start justify-between gap-2"
+        className="game-hud-control pointer-events-none fixed inset-x-0 top-0 z-50 p-2 sm:p-4 flex flex-col sm:flex-row items-center sm:items-start justify-between gap-2 select-none"
       >
         {/* LEFT HALF (top-left): Progress & Weapons */}
-        <div className="pointer-events-auto flex items-center gap-2 sm:gap-4 rounded-xl border border-white/10 bg-[#0b0d11]/90 px-3 sm:px-4 py-1.5 sm:py-2 text-white backdrop-blur-md shadow-lg max-w-full">
+        <div className="pointer-events-auto flex items-center gap-2 sm:gap-3.5 rounded-xl border border-white/10 bg-[#0b0d11]/90 px-3 sm:px-4 py-1.5 sm:py-2 text-white backdrop-blur-md shadow-lg max-w-full">
           {/* Progress: "Domolition" label, percentage, and 4px progress bar */}
-          <div className="min-w-[85px] sm:min-w-[120px] shrink-0">
+          <div className="min-w-[76px] sm:min-w-[120px] shrink-0">
             <div className="flex items-baseline justify-between gap-1.5 text-xs">
               <span id="hud-progress-label" className="font-semibold text-white/90">Domolition</span>
               <span id="hud-progress-text" className="tabular-nums text-white/70">{destroyedPercent}%</span>
@@ -1752,7 +1752,7 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
                   aria-keyshortcuts={wp.key}
                   title={`${wp.name} [${wp.key}]`}
                   onClick={() => setCurrentWeapon(wpKey)}
-                  className={`min-h-[40px] sm:min-h-[36px] flex items-center justify-center gap-1.5 rounded-lg px-2 sm:px-2.5 text-xs sm:text-sm font-medium transition-colors cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+                  className={`min-h-[40px] min-w-[32px] sm:min-w-[36px] sm:min-h-[36px] flex items-center justify-center gap-1.5 rounded-lg px-2 sm:px-2.5 text-xs sm:text-sm font-medium transition-colors cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
                     isSelected
                       ? 'bg-white/15 text-white'
                       : 'text-white/70 hover:bg-white/10 hover:text-white'
@@ -1773,16 +1773,16 @@ export default function ShooterGame({ isActive, onClose }: ShooterGameProps) {
         {/* RIGHT HALF (top-right): Stats & Actions */}
         <div className="pointer-events-auto flex items-center gap-2 sm:gap-3 rounded-xl border border-white/10 bg-[#0b0d11]/90 px-3 sm:px-4 py-1.5 sm:py-2 text-white backdrop-blur-md shadow-lg max-w-full">
           {/* Stats: Wrecked and Score with tabular-nums and stable min-width */}
-          <dl className="flex shrink-0 items-center gap-3 sm:gap-4 text-center tabular-nums" aria-live="off">
-            <div className="min-w-[44px]">
+          <dl className="flex shrink-0 items-center gap-2.5 sm:gap-4 text-center tabular-nums" aria-live="off">
+            <div className="min-w-[42px] sm:min-w-[50px]">
               <dt className="text-xs text-white/60">Wrecked</dt>
-              <dd id="hud-wrecked" className="text-xs sm:text-sm font-semibold text-white">
+              <dd id="hud-wrecked" className="text-xs sm:text-sm font-semibold text-white whitespace-nowrap">
                 {destroyedCount.toLocaleString()}
               </dd>
             </div>
-            <div className="min-w-[56px] sm:min-w-[64px]">
+            <div className="min-w-[50px] sm:min-w-[64px]">
               <dt className="text-xs text-white/60">Score</dt>
-              <dd id="hud-score" className="text-xs sm:text-sm font-semibold text-white">
+              <dd id="hud-score" className="text-xs sm:text-sm font-semibold text-white whitespace-nowrap">
                 {score.toLocaleString()}
               </dd>
             </div>
